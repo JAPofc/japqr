@@ -1,0 +1,78 @@
+{
+  "name": "japqr",
+  "version": "1.0.0",
+  "description": "Zero-dependency QR Code generator for Node.js, Bun, Deno and browsers - numeric, alphanumeric, byte and ECI segments, with SVG, terminal and canvas output.",
+  "keywords": [
+    "japqr",
+    "qr",
+    "qrcode",
+    "qr-code",
+    "qr-code-generator",
+    "barcode",
+    "2d-matrix",
+    "svg",
+    "typescript",
+    "zero-dependency",
+    "japofc",
+    "nayuki"
+  ],
+  "homepage": "https://github.com/japofc/japqr#readme",
+  "bugs": {
+    "url": "https://github.com/japofc/japqr/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/japofc/japqr.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "@japofc",
+    "url": "https://github.com/japofc"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/japofc"
+  },
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "japqr": "./bin/cli.mjs"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=16"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "clean": "node scripts/clean.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "test:only": "node --test test/*.test.mjs",
+    "coverage": "node --experimental-test-coverage --test test/*.test.mjs",
+    "prepublishOnly": "npm run clean && npm run build && npm run preflight && npm run test:only",
+    "release": "npm version",
+    "example": "node examples/node/quickstart.mjs",
+    "preflight": "node scripts/preflight.mjs"
+  },
+  "devDependencies": {
+    "jsqr": "^1.4.0",
+    "typescript": "^5.6.0"
+  }
+}

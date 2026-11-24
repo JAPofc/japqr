@@ -1,0 +1,22 @@
+# Source and tooling - not needed at runtime
+src/
+test/
+examples/
+scripts/
+docs/
+.github/
+tsconfig.json
+tsconfig.esm.json
+tsconfig.cjs.json
+.gitignore
+.npmignore
+CONTRIBUTING.md
+SECURITY.md
+.eslintrc*
+.prettierrc*
+
+# Keep the published package lean
+node_modules/
+coverage/
+*.log
+.DS_Store
