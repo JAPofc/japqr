@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * japqr - pre-publish preflight check
+ * japofc-qr - pre-publish preflight check
  *
  * Runs every sanity check that would otherwise be discovered the hard way,
  * halfway through `npm publish`: package metadata, entry points, bin files,
@@ -12,7 +12,7 @@
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */
@@ -71,7 +71,7 @@ function walk(dir, extensions, out = []) {
 }
 
 // ---------------------------------------------------------------------------
-console.log('japqr preflight');
+console.log('japofc-qr preflight');
 
 // 1. package.json ------------------------------------------------------------
 section('Package metadata');

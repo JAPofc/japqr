@@ -1,5 +1,5 @@
 /**
- * japqr - segment modes and character-count widths
+ * japofc-qr - segment modes and character-count widths
  *
  * ISO/IEC 18004 defines five data modes. Each mode has a 4-bit indicator and a
  * character-count field whose width depends on the version band. This module is
@@ -7,7 +7,7 @@
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */

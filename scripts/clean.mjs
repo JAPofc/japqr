@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
- * japqr - clean script
+ * japofc-qr - clean script
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */

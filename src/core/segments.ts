@@ -1,5 +1,5 @@
 /**
- * japqr - QR Code segments
+ * japofc-qr - QR Code segments
  *
  * A segment is one mode switch inside the codeword stream. This module knows
  * how to turn text into the most compact sequence of numeric, alphanumeric and
@@ -7,7 +7,7 @@
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */

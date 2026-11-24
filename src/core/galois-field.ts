@@ -1,5 +1,5 @@
 /**
- * japqr - GF(2^8) arithmetic
+ * japofc-qr - GF(2^8) arithmetic
  *
  * Reed-Solomon error correction in QR Codes works over the finite field
  * GF(2^8) reduced by the primitive polynomial `x^8 + x^4 + x^3 + x^2 + 1`
@@ -9,7 +9,7 @@
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */

@@ -1,5 +1,5 @@
 /**
- * japqr - SVG renderer
+ * japofc-qr - SVG renderer
  *
  * Produces a single, self-contained SVG document: one quiet-zone rectangle plus
  * one `<path>` built from horizontal runs of dark modules. The result is tiny
@@ -8,7 +8,7 @@
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */

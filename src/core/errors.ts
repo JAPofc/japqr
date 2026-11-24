@@ -1,12 +1,12 @@
 /**
- * japqr - error taxonomy
+ * japofc-qr - error taxonomy
  *
  * Every exception thrown by this library derives from {@link QrCodeError}, so
  * callers can branch on `instanceof` or on the stable `code` property.
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */

@@ -1,5 +1,5 @@
 /**
- * japqr - variable-length bit buffer
+ * japofc-qr - variable-length bit buffer
  *
  * A tiny, allocation-friendly container used while assembling the QR Code
  * codeword stream. Bits are appended MSB-first, matching the bit order that
@@ -7,7 +7,7 @@
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */

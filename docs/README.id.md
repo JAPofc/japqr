@@ -1,12 +1,12 @@
 <div align="center">
 
-<img src="assets/hero.svg" alt="japqr — generator QR code tanpa dependensi" width="880">
+<img src="assets/hero.svg" alt="japofc-qr — generator QR code tanpa dependensi" width="880">
 
 <p>
-  <a href="https://www.npmjs.com/package/japqr"><img alt="versi npm" src="https://img.shields.io/npm/v/japqr?style=flat-square&color=cb3837"></a>
-  <a href="https://www.npmjs.com/package/japqr"><img alt="unduhan npm" src="https://img.shields.io/npm/dm/japqr?style=flat-square&color=cb3837"></a>
+  <a href="https://www.npmjs.com/package/japofc-qr"><img alt="versi npm" src="https://img.shields.io/npm/v/japofc-qr?style=flat-square&color=cb3837"></a>
+  <a href="https://www.npmjs.com/package/japofc-qr"><img alt="unduhan npm" src="https://img.shields.io/npm/dm/japofc-qr?style=flat-square&color=cb3837"></a>
   <a href="https://github.com/JAPofc/japqr/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/JAPofc/japqr/ci.yml?branch=main&style=flat-square&label=CI"></a>
-  <a href="https://www.npmjs.com/package/japqr"><img alt="types" src="https://img.shields.io/npm/types/japqr?style=flat-square&color=3178c6"></a>
+  <a href="https://www.npmjs.com/package/japofc-qr"><img alt="types" src="https://img.shields.io/npm/types/japofc-qr?style=flat-square&color=3178c6"></a>
   <a href="../LICENSE"><img alt="lisensi" src="https://img.shields.io/badge/license-MIT-2ea44f?style=flat-square"></a>
   <img alt="dependensi" src="https://img.shields.io/badge/dependensi-0-2ea44f?style=flat-square">
 </p>
@@ -51,13 +51,13 @@
 ## Instalasi
 
 ```bash
-npm install japqr
+npm install japofc-qr
 ```
 
 ```bash
-pnpm add japqr
-yarn add japqr
-bun add japqr
+pnpm add japofc-qr
+yarn add japofc-qr
+bun add japofc-qr
 ```
 
 Node.js 16+ atau browser modern. Tanpa dependensi, tanpa modul native.
@@ -69,7 +69,7 @@ Node.js 16+ atau browser modern. Tanpa dependensi, tanpa modul native.
 ### Node.js
 
 ```js
-import { QrCode } from 'japqr';
+import { QrCode } from 'japofc-qr';
 
 const qr = QrCode.encodeText('https://github.com/JAPofc/japqr');
 
@@ -86,7 +86,7 @@ const raw = qr.toMatrix();         // boolean[][]
 ### CommonJS
 
 ```js
-const { QrCode } = require('japqr');
+const { QrCode } = require('japofc-qr');
 
 const qr = QrCode.encodeText('https://example.com');
 console.log(qr.toSvgString());
@@ -98,7 +98,7 @@ console.log(qr.toSvgString());
 <canvas id="qr"></canvas>
 
 <script type="module">
-  import { QrCode } from 'japqr';
+  import { QrCode } from 'japofc-qr';
 
   const qr = QrCode.encodeText('https://example.com', { ecc: 'high' });
 
@@ -116,13 +116,13 @@ console.log(qr.toSvgString());
 ### Command line
 
 ```bash
-npx japqr "https://example.com" -o qr.svg
+npx japofc-qr "https://example.com" -o qr.svg
 
 # tampilkan langsung di terminal
-npx japqr "Halo, dunia!" --format terminal
+npx japofc-qr "Halo, dunia!" --format terminal
 
 # error correction tertinggi, quiet zone lebih lebar, skala lebih besar
-npx japqr "Rahasia" --ecc high --margin 3 --scale 12
+npx japofc-qr "Rahasia" --ecc high --margin 3 --scale 12
 ```
 
 ---
@@ -153,7 +153,7 @@ QrCode.encodeBinary(new Uint8Array([0xde, 0xad, 0xbe, 0xef]));
 Mengencode daftar segmen yang sudah disiapkan — pintu keluar untuk kontrol penuh.
 
 ```js
-import { QrCode, QrSegment } from 'japqr';
+import { QrCode, QrSegment } from 'japofc-qr';
 
 const qr = QrCode.encodeSegments(
   [QrSegment.eci(26), QrSegment.numeric('0123456789'), QrSegment.alphanumeric('HELLO WORLD')],
@@ -225,7 +225,7 @@ qr.toSvgString({
   light: '#ffffff',                // warna modul terang
   scale: 8,                        // pixel per modul; hilangkan untuk SVG responsif
   includeXmlDeclaration: true,     // tambahkan <?xml ...?>
-  attribution: true,               // sisipkan <!-- japqr · @japofc · MIT -->
+  attribution: true,               // sisipkan <!-- japofc-qr · @japofc · MIT -->
   title: 'Buka repositori',        // <title> dan aria-label
   id: 'qr-code',                   // atribut id opsional
   className: 'qr',                 // atribut class opsional
@@ -284,7 +284,7 @@ for (const row of qr.modules) {
 | 40 | 2956 | 2334 | 1666 | 1276 | 177×177 |
 
 ```js
-import { getDataCapacity } from 'japqr';
+import { getDataCapacity } from 'japofc-qr';
 
 getDataCapacity(40, 'low'); // 2956
 ```
@@ -303,7 +303,7 @@ Semua error turunan `QrCodeError`, jadi satu `catch` cukup untuk seluruh library
 | `EncodingError` | `ERR_ENCODING` | Kondisi internal yang seharusnya mustahil. |
 
 ```js
-import { QrCode, DataTooLongError } from 'japqr';
+import { QrCode, DataTooLongError } from 'japofc-qr';
 
 try {
   QrCode.encodeText('x'.repeat(10_000));

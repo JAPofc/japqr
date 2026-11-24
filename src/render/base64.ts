@@ -1,5 +1,5 @@
 /**
- * japqr - base64 helper
+ * japofc-qr - base64 helper
  *
  * Encodes UTF-8 text (typically an SVG document) into base64. The string is
  * always converted to UTF-8 bytes first, so emoji and other astral characters
@@ -7,7 +7,7 @@
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */

@@ -1,5 +1,5 @@
 /**
- * japqr - the QR Code encoder
+ * japofc-qr - the QR Code encoder
  *
  * Public entry points live here: `QrCode.encodeText`, `QrCode.encodeBinary`
  * and `QrCode.encodeSegments`. They choose the version, pad the payload,
@@ -8,7 +8,7 @@
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */

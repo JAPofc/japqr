@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * japqr - build script
+ * japofc-qr - build script
  *
  * Compiles the TypeScript sources twice: once as native ESM and once as
  * CommonJS. Each output folder gets its own `package.json` with the right
@@ -8,7 +8,7 @@
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */

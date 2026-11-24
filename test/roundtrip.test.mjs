@@ -1,5 +1,5 @@
 /**
- * japqr - round-trip tests
+ * japofc-qr - round-trip tests
  *
  * Every generated matrix is rasterised and decoded again with `jsqr`. This is
  * the strongest correctness check available: it exercises the whole pipeline
@@ -8,7 +8,7 @@
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */
@@ -63,7 +63,7 @@ test('plain ASCII round-trips', () => {
 
 test('URLs round-trip', () => {
   assertRoundTrip('https://example.com/path?query=1&other=2#fragment');
-  assertRoundTrip('https://github.com/japofc/japqr');
+  assertRoundTrip('https://github.com/japofc/japofc-qr');
   assertRoundTrip('mailto:hello@example.com?subject=QR%20Code');
 });
 

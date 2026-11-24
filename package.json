@@ -1,9 +1,9 @@
 {
-  "name": "japqr",
+  "name": "japofc-qr",
   "version": "1.0.0",
   "description": "Zero-dependency QR Code generator for Node.js, Bun, Deno and browsers - numeric, alphanumeric, byte and ECI segments, with SVG, terminal and canvas output.",
   "keywords": [
-    "japqr",
+    "japofc-qr",
     "japofc",
     "qr",
     "qrcode",
@@ -50,13 +50,13 @@
     "isomorphic",
     "universal"
   ],
-  "homepage": "https://github.com/japofc/japqr#readme",
+  "homepage": "https://github.com/japofc/japofc-qr#readme",
   "bugs": {
-    "url": "https://github.com/japofc/japqr/issues"
+    "url": "https://github.com/japofc/japofc-qr/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/japofc/japqr.git"
+    "url": "git+https://github.com/japofc/japofc-qr.git"
   },
   "license": "MIT",
   "author": {
@@ -80,7 +80,7 @@
     "./package.json": "./package.json"
   },
   "bin": {
-    "japqr": "./bin/cli.mjs"
+    "japofc-qr": "./bin/cli.mjs"
   },
   "files": [
     "dist",

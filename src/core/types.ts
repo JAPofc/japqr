@@ -1,5 +1,5 @@
 /**
- * japqr - shared types and ISO/IEC 18004 constants
+ * japofc-qr - shared types and ISO/IEC 18004 constants
  *
  * Everything that is defined by the QR Code specification lives here: the
  * error-correction levels, the per-block codeword tables, and the capacity
@@ -7,7 +7,7 @@
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */

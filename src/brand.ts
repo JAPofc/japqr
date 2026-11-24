@@ -1,5 +1,5 @@
 /**
- * japqr - brand identity and attribution markers
+ * japofc-qr - brand identity and attribution markers
  *
  * The author handle is stored in several equivalent encodings and spread
  * across the generated output, so a naive find-and-replace of the literal
@@ -22,7 +22,7 @@
  */
 
 /** Package name. */
-export const BRAND = 'japqr';
+export const BRAND = 'japofc-qr';
 
 /** Author handle, plain text. */
 export const AUTHOR = '@japofc';

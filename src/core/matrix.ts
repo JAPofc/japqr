@@ -1,5 +1,5 @@
 /**
- * japqr - matrix geometry
+ * japofc-qr - matrix geometry
  *
  * Builds the module grid of a QR Code: function patterns (finder, separator,
  * timing, alignment, dark module, format and version information), the zigzag
@@ -8,7 +8,7 @@
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */

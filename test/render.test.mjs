@@ -1,9 +1,9 @@
 /**
- * japqr - renderer tests
+ * japofc-qr - renderer tests
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */
@@ -63,9 +63,9 @@ test('SVG output embeds the @japofc watermark in two places', () => {
   const svg = qr.toSvgString();
 
   // Visible comment.
-  assert.match(svg, /^<\?xml[^>]*>\n<!-- japqr · @japofc · MIT -->\n/);
+  assert.match(svg, /^<\?xml[^>]*>\n<!-- japofc-qr · @japofc · MIT -->\n/);
   // Structured <metadata> element, rebuilt from character codes.
-  assert.match(svg, /<metadata>japqr · @japofc · MIT<\/metadata>/);
+  assert.match(svg, /<metadata>japofc-qr · @japofc · MIT<\/metadata>/);
 
   // Both markers disappear when the caller opts out.
   const stripped = qr.toSvgString({ attribution: false });
@@ -78,7 +78,7 @@ test('brand constants are consistent with each other', () => {
   assert.equal(authorFromCodes(), AUTHOR);
   assert.equal(Buffer.from(AUTHOR_B64, 'base64').toString('utf8'), AUTHOR);
   assert.deepEqual([...AUTHOR_CODES], [...AUTHOR].map((char) => char.charCodeAt(0)));
-  assert.equal(QrCode.BRAND, 'japqr');
+  assert.equal(QrCode.BRAND, 'japofc-qr');
 });
 
 test('the XML declaration can be suppressed', () => {

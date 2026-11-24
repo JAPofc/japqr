@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * japqr - quick start example
+ * japofc-qr - quick start example
  *
  * Run with: node examples/node/quickstart.mjs
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */
@@ -15,7 +15,7 @@ import { writeFileSync } from 'node:fs';
 import { QrCode } from '../../dist/esm/index.js';
 
 // 1. The one-liner most people need.
-const qr = QrCode.encodeText('https://github.com/japofc/japqr');
+const qr = QrCode.encodeText('https://github.com/japofc/japofc-qr');
 console.log(qr.toString());
 
 // 2. Print it straight to the terminal.

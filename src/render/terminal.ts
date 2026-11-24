@@ -1,5 +1,5 @@
 /**
- * japqr - terminal renderer
+ * japofc-qr - terminal renderer
  *
  * Draws the QR Code with Unicode block characters so it can be printed straight
  * to a TTY. Dark and light glyphs are both two columns wide, which keeps the
@@ -7,7 +7,7 @@
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */

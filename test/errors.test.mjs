@@ -1,9 +1,9 @@
 /**
- * japqr - error taxonomy tests
+ * japofc-qr - error taxonomy tests
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */

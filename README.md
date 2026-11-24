@@ -1,12 +1,12 @@
 <div align="center">
 
-<img src="docs/assets/hero.svg" alt="japqr — zero-dependency QR code generator" width="880">
+<img src="docs/assets/hero.svg" alt="japofc-qr — zero-dependency QR code generator" width="880">
 
 <p>
-  <a href="https://www.npmjs.com/package/japqr"><img alt="npm version" src="https://img.shields.io/npm/v/japqr?style=flat-square&color=cb3837"></a>
-  <a href="https://www.npmjs.com/package/japqr"><img alt="npm downloads" src="https://img.shields.io/npm/dm/japqr?style=flat-square&color=cb3837"></a>
+  <a href="https://www.npmjs.com/package/japofc-qr"><img alt="npm version" src="https://img.shields.io/npm/v/japofc-qr?style=flat-square&color=cb3837"></a>
+  <a href="https://www.npmjs.com/package/japofc-qr"><img alt="npm downloads" src="https://img.shields.io/npm/dm/japofc-qr?style=flat-square&color=cb3837"></a>
   <a href="https://github.com/JAPofc/japqr/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/JAPofc/japqr/ci.yml?branch=main&style=flat-square&label=CI"></a>
-  <a href="https://www.npmjs.com/package/japqr"><img alt="types" src="https://img.shields.io/npm/types/japqr?style=flat-square&color=3178c6"></a>
+  <a href="https://www.npmjs.com/package/japofc-qr"><img alt="types" src="https://img.shields.io/npm/types/japofc-qr?style=flat-square&color=3178c6"></a>
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-2ea44f?style=flat-square"></a>
   <img alt="dependencies" src="https://img.shields.io/badge/dependencies-0-2ea44f?style=flat-square">
 </p>
@@ -52,13 +52,13 @@
 ## Installation
 
 ```bash
-npm install japqr
+npm install japofc-qr
 ```
 
 ```bash
-pnpm add japqr
-yarn add japqr
-bun add japqr
+pnpm add japofc-qr
+yarn add japofc-qr
+bun add japofc-qr
 ```
 
 Node.js 16+ or any modern browser. No dependencies, no native modules.
@@ -68,7 +68,7 @@ Node.js 16+ or any modern browser. No dependencies, no native modules.
 
 ```html
 <script type="module">
-  import { QrCode } from 'https://cdn.jsdelivr.net/npm/japqr@1/dist/esm/index.js';
+  import { QrCode } from 'https://cdn.jsdelivr.net/npm/japofc-qr@1/dist/esm/index.js';
   document.body.innerHTML = QrCode.encodeText('Hello from a CDN').toSvgString();
 </script>
 ```
@@ -82,7 +82,7 @@ Node.js 16+ or any modern browser. No dependencies, no native modules.
 ### Node.js
 
 ```js
-import { QrCode } from 'japqr';
+import { QrCode } from 'japofc-qr';
 
 const qr = QrCode.encodeText('https://github.com/JAPofc/japqr');
 
@@ -99,7 +99,7 @@ const raw = qr.toMatrix();         // boolean[][]
 ### CommonJS
 
 ```js
-const { QrCode } = require('japqr');
+const { QrCode } = require('japofc-qr');
 
 const qr = QrCode.encodeText('https://example.com');
 console.log(qr.toSvgString());
@@ -111,7 +111,7 @@ console.log(qr.toSvgString());
 <canvas id="qr"></canvas>
 
 <script type="module">
-  import { QrCode } from 'japqr';
+  import { QrCode } from 'japofc-qr';
 
   const qr = QrCode.encodeText('https://example.com', { ecc: 'high' });
 
@@ -129,21 +129,21 @@ console.log(qr.toSvgString());
 ### Command line
 
 ```bash
-npx japqr "https://example.com" -o qr.svg
+npx japofc-qr "https://example.com" -o qr.svg
 
 # print it in the terminal instead
-npx japqr "Hello, world!" --format terminal
+npx japofc-qr "Hello, world!" --format terminal
 
 # highest error correction, wider quiet zone, larger scale
-npx japqr "Top secret" --ecc high --margin 3 --scale 12
+npx japofc-qr "Top secret" --ecc high --margin 3 --scale 12
 ```
 
 <details>
 <summary><strong>All CLI options</strong></summary>
 
 ```
-japqr <text> [options]
-cat payload.txt | japqr [options]
+japofc-qr <text> [options]
+cat payload.txt | japofc-qr [options]
 
   -o, --out <file>        Write to a file instead of stdout
   -f, --format <format>   svg | terminal | data-url | json | matrix  (default: svg)
@@ -191,7 +191,7 @@ QrCode.encodeBinary(new Uint8Array([0xde, 0xad, 0xbe, 0xef]));
 Encodes a list of prepared segments — the escape hatch for full control.
 
 ```js
-import { QrCode, QrSegment } from 'japqr';
+import { QrCode, QrSegment } from 'japofc-qr';
 
 const qr = QrCode.encodeSegments(
   [QrSegment.eci(26), QrSegment.numeric('0123456789'), QrSegment.alphanumeric('HELLO WORLD')],
@@ -263,7 +263,7 @@ qr.toSvgString({
   light: '#ffffff',                // light modules
   scale: 8,                        // pixels per module; omit for a responsive SVG
   includeXmlDeclaration: true,     // prepend <?xml ...?>
-  attribution: true,               // embed <!-- japqr · @japofc · MIT -->
+  attribution: true,               // embed <!-- japofc-qr · @japofc · MIT -->
   title: 'Open the repository',    // <title> and aria-label
   id: 'qr-code',                   // optional id attribute
   className: 'qr',                 // optional class attribute
@@ -275,7 +275,7 @@ Dark modules are merged into horizontal runs, so even a 177×177 code produces a
 ```html
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 29 29" shape-rendering="crispEdges" role="img" aria-label="QR code">
   <title>QR code</title>
-  <metadata>japqr · @japofc · MIT</metadata>
+  <metadata>japofc-qr · @japofc · MIT</metadata>
   <rect x="-4" y="-4" width="29" height="29" fill="#ffffff"/>
   <path fill="#000000" d="M0 0h7v1h-7z..."/>
 </svg>
@@ -331,7 +331,7 @@ for (const row of qr.modules) {
 | 40 | 2956 | 2334 | 1666 | 1276 | 177×177 |
 
 ```js
-import { getDataCapacity } from 'japqr';
+import { getDataCapacity } from 'japofc-qr';
 
 getDataCapacity(40, 'low'); // 2956
 ```
@@ -350,7 +350,7 @@ Every error extends `QrCodeError`, so one `catch` covers the whole library. Each
 | `EncodingError` | `ERR_ENCODING` | An impossible internal state was reached. |
 
 ```js
-import { QrCode, DataTooLongError } from 'japqr';
+import { QrCode, DataTooLongError } from 'japofc-qr';
 
 try {
   QrCode.encodeText('x'.repeat(10_000));

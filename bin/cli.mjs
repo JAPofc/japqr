@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 /**
- * japqr - command line interface
+ * japofc-qr - command line interface
  *
  * Usage:
- *   japqr "Hello, world!"
- *   japqr "https://example.com" -o qr.svg --ecc high
- *   japqr "Hello" --format terminal
- *   cat payload.txt | japqr --format data-url
+ *   japofc-qr "Hello, world!"
+ *   japofc-qr "https://example.com" -o qr.svg --ecc high
+ *   japofc-qr "Hello" --format terminal
+ *   cat payload.txt | japofc-qr --format data-url
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */
@@ -21,11 +21,11 @@ import { fileURLToPath } from 'node:url';
 import { QrCode } from '../dist/esm/index.js';
 
 const HELP = `
-japqr - generate QR codes from the command line
+japofc-qr - generate QR codes from the command line
 
 USAGE
-  japqr <text> [options]
-  cat payload.txt | japqr [options]
+  japofc-qr <text> [options]
+  cat payload.txt | japofc-qr [options]
 
 OPTIONS
   -o, --out <file>        Write to a file instead of stdout
@@ -46,10 +46,10 @@ OPTIONS
   -v, --version           Print the package version
 
 EXAMPLES
-  japqr "https://github.com/japofc/japqr"
-  japqr "Hello, world!" -f terminal
-  japqr "Top secret" -e H -m 2 -s 12 -o qr.svg
-  printf 'payload' | japqr --format data-url
+  japofc-qr "https://github.com/japofc/japofc-qr"
+  japofc-qr "Hello, world!" -f terminal
+  japofc-qr "Top secret" -e H -m 2 -s 12 -o qr.svg
+  printf 'payload' | japofc-qr --format data-url
 `;
 
 const VERSION = readVersion();
@@ -67,8 +67,8 @@ function readVersion() {
 }
 
 function fail(message) {
-  process.stderr.write(`japqr: ${message}\n`);
-  process.stderr.write('Run `japqr --help` for usage.\n');
+  process.stderr.write(`japofc-qr: ${message}\n`);
+  process.stderr.write('Run `japofc-qr --help` for usage.\n');
   process.exit(1);
 }
 
@@ -218,7 +218,7 @@ async function main() {
     return;
   }
   if (options.version) {
-    process.stdout.write(`japqr ${VERSION} · @japofc\n`);
+    process.stdout.write(`japofc-qr ${VERSION} · @japofc\n`);
     return;
   }
 

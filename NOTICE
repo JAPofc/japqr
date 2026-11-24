@@ -1,4 +1,4 @@
-japqr
+japofc-qr
 Copyright (c) 2026 @japofc
 https://github.com/JAPofc/japqr
 
@@ -20,7 +20,7 @@ The @japofc attribution appears in:
   - the header of every source file
   - the comment and <metadata> element of generated SVG documents
   - QrCode.toJSON() as the "generator" field
-  - the japqr command line interface
+  - the japofc-qr command line interface
 
 Stripping the attribution and redistributing the package under another name
 is a license violation, not a supported configuration. The library contains

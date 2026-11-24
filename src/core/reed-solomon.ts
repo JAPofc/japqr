@@ -1,5 +1,5 @@
 /**
- * japqr - Reed-Solomon encoder
+ * japofc-qr - Reed-Solomon encoder
  *
  * QR Codes protect each data block with a Reed-Solomon code over GF(2^8).
  * Given the block payload and the number of error-correction codewords, the
@@ -7,7 +7,7 @@
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */

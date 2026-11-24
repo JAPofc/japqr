@@ -1,9 +1,9 @@
 /**
- * japqr - encoding behaviour tests
+ * japofc-qr - encoding behaviour tests
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */
@@ -222,7 +222,7 @@ test('binary payloads survive untouched', () => {
 test('toJSON exposes a stable snapshot shape', () => {
   const qr = QrCode.encodeText('HELLO', { boostEcc: false });
   const json = qr.toJSON();
-  assert.equal(json.generator, 'japqr');
+  assert.equal(json.generator, 'japofc-qr');
   assert.equal(json.version, 1);
   assert.equal(json.size, 21);
   assert.equal(json.ecc, 'medium');

@@ -1,13 +1,13 @@
 /**
- * japqr - public API surface
+ * japofc-qr - public API surface
  *
  * Everything a consumer needs is re-exported from this single module, so both
- * `import { QrCode } from 'japqr'` and the CommonJS equivalent work
+ * `import { QrCode } from 'japofc-qr'` and the CommonJS equivalent work
  * with identical shapes.
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japqr
+ * https://github.com/japofc/japofc-qr
  *
  * @author @japofc
  */

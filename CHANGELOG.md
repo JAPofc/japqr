@@ -22,7 +22,7 @@ Initial public release.
 - Renderers: SVG, terminal (Unicode block art), `<canvas>`, and SVG data URLs.
 - Raw matrix access: `getModule`, `toMatrix`, `toBinaryStrings`.
 - Dual ESM and CommonJS builds with TypeScript declarations and source maps.
-- `japqr` command line interface.
+- `japofc-qr` command line interface.
 - Typed error taxonomy with stable machine-readable codes.
 - Test suite including end-to-end decoding through `jsqr` for every version,
   error-correction level and mask pattern.
@@ -34,4 +34,4 @@ Initial public release.
 - All 8 mask patterns round-trip.
 - Numeric, alphanumeric, byte, UTF-8 and emoji payloads round-trip.
 
-[1.0.0]: https://github.com/japofc/japqr/releases/tag/v1.0.0
+[1.0.0]: https://github.com/japofc/japofc-qr/releases/tag/v1.0.0
