@@ -10,7 +10,7 @@
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japofc-qr
+ * https://github.com/JAPofc/japqr
  *
  * @author @japofc
  */
@@ -46,7 +46,7 @@ OPTIONS
   -v, --version           Print the package version
 
 EXAMPLES
-  japofc-qr "https://github.com/japofc/japofc-qr"
+  japofc-qr "https://github.com/JAPofc/japqr"
   japofc-qr "Hello, world!" -f terminal
   japofc-qr "Top secret" -e H -m 2 -s 12 -o qr.svg
   printf 'payload' | japofc-qr --format data-url

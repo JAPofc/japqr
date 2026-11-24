@@ -34,4 +34,4 @@ Initial public release.
 - All 8 mask patterns round-trip.
 - Numeric, alphanumeric, byte, UTF-8 and emoji payloads round-trip.
 
-[1.0.0]: https://github.com/japofc/japofc-qr/releases/tag/v1.0.0
+[1.0.0]: https://github.com/JAPofc/japqr/releases/tag/v1.0.0

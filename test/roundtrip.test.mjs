@@ -8,7 +8,7 @@
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japofc-qr
+ * https://github.com/JAPofc/japqr
  *
  * @author @japofc
  */
@@ -63,7 +63,7 @@ test('plain ASCII round-trips', () => {
 
 test('URLs round-trip', () => {
   assertRoundTrip('https://example.com/path?query=1&other=2#fragment');
-  assertRoundTrip('https://github.com/japofc/japofc-qr');
+  assertRoundTrip('https://github.com/JAPofc/japqr');
   assertRoundTrip('mailto:hello@example.com?subject=QR%20Code');
 });
 

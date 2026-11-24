@@ -6,7 +6,7 @@
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japofc-qr
+ * https://github.com/JAPofc/japqr
  *
  * @author @japofc
  */
@@ -15,7 +15,7 @@ import { writeFileSync } from 'node:fs';
 import { QrCode } from '../../dist/esm/index.js';
 
 // 1. The one-liner most people need.
-const qr = QrCode.encodeText('https://github.com/japofc/japofc-qr');
+const qr = QrCode.encodeText('https://github.com/JAPofc/japqr');
 console.log(qr.toString());
 
 // 2. Print it straight to the terminal.

@@ -4,7 +4,7 @@
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
- * https://github.com/japofc/japofc-qr
+ * https://github.com/JAPofc/japqr
  *
  * @author @japofc
  */
