@@ -13,6 +13,7 @@
  * @author @japofc
  */
 
+import { BRAND } from '../brand.js';
 import { BitBuffer } from './bit-buffer.js';
 import { DataTooLongError, InvalidArgumentError } from './errors.js';
 import { QrMatrix } from './matrix.js';
@@ -250,6 +251,7 @@ export class QrCode implements QrLike {
 
   /** JSON-friendly representation for logging and snapshot testing. */
   public toJSON(): {
+    generator: string;
     version: number;
     size: number;
     ecc: EccLevel;
@@ -257,6 +259,7 @@ export class QrCode implements QrLike {
     modules: string[];
   } {
     return {
+      generator: BRAND,
       version: this.version,
       size: this.size,
       ecc: this.ecc,

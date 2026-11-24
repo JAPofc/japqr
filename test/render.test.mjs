@@ -49,6 +49,12 @@ test('accessibility metadata can be customised', () => {
   assert.match(svg, /aria-label="Open the site"/);
 });
 
+test('SVG output embeds the @japofc watermark', () => {
+  const qr = QrCode.encodeText('HELLO');
+  assert.match(qr.toSvgString(), /^<\?xml[^>]*>\n<!-- japqr · @japofc · MIT -->\n/);
+  assert.equal(qr.toSvgString({ attribution: false }).includes('@japofc'), false);
+});
+
 test('the XML declaration can be suppressed', () => {
   const qr = QrCode.encodeText('HELLO');
   assert.ok(!qr.toSvgString({ includeXmlDeclaration: false }).startsWith('<?xml'));

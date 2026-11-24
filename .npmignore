@@ -10,8 +10,6 @@ tsconfig.esm.json
 tsconfig.cjs.json
 .gitignore
 .npmignore
-CONTRIBUTING.md
-SECURITY.md
 .eslintrc*
 .prettierrc*
 

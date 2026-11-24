@@ -13,6 +13,7 @@
  * @author @japofc
  */
 
+import { attributionComment } from '../brand.js';
 import type { QrLike } from '../core/qr-code.js';
 
 /** Options for the SVG renderer. */
@@ -38,6 +39,11 @@ export interface SvgOptions {
   readonly id?: string;
   /** Optional `class` attribute for the root `<svg>` element. */
   readonly className?: string;
+  /**
+   * Embed an attribution comment in the document. Defaults to `true`.
+   * Set to `false` for byte-exact output requirements.
+   */
+  readonly attribution?: boolean;
 }
 
 /** Default quiet zone, matching the ISO/IEC 18004 recommendation. */
@@ -63,9 +69,10 @@ export function renderSvg(qr: QrLike, options: SvgOptions = {}): string {
   const ariaLabel = options.ariaLabel ?? title;
 
   const declaration = options.includeXmlDeclaration === false ? '' : '<?xml version="1.0" encoding="UTF-8"?>\n';
+  const attribution = options.attribution === false ? '' : `${attributionComment()}\n`;
 
   return (
-    `${declaration}<svg xmlns="http://www.w3.org/2000/svg" viewBox="${offset} ${offset} ${dimension} ${dimension}"${sizeAttributes} ` +
+    `${declaration}${attribution}<svg xmlns="http://www.w3.org/2000/svg" viewBox="${offset} ${offset} ${dimension} ${dimension}"${sizeAttributes} ` +
     `shape-rendering="crispEdges" role="img" aria-label="${escapeAttribute(ariaLabel)}"${id}${className}>\n` +
     `  <title>${escapeText(title)}</title>\n` +
     `  <rect x="${offset}" y="${offset}" width="${dimension}" height="${dimension}" fill="${light}"/>\n` +

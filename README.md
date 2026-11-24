@@ -46,7 +46,7 @@ yarn add japqr
 bun add japqr
 ```
 
-Requires Node.js 16+ or any modern browser. No dependencies, no native modules, no peer dependencies.
+Node.js 16+ or any modern browser. No dependencies, no native modules.
 
 <details>
 <summary><strong>Use it from a CDN</strong></summary>
@@ -248,6 +248,7 @@ qr.toSvgString({
   light: '#ffffff',                // light modules
   scale: 8,                        // pixels per module; omit for a responsive SVG
   includeXmlDeclaration: true,     // prepend <?xml ...?>
+  attribution: true,               // embed <!-- japqr · @japofc · MIT -->
   title: 'Open the repository',    // <title> and aria-label
   id: 'qr-code',                   // optional id attribute
   className: 'qr',                 // optional class attribute
@@ -348,7 +349,7 @@ try {
 
 ## Credits
 
-The encoder implements ISO/IEC 18004. The architecture — compact version selection, block interleaving and penalty-scored masking — is inspired by [Nayuki's QR Code generator](https://github.com/nayuki/QR-Code-generator), the reference implementation of the algorithm. This package is an independent TypeScript implementation with its own segmentation optimiser, renderers, CLI and test suite.
+Implements ISO/IEC 18004. The architecture — version selection, block interleaving, penalty-scored masking — is inspired by [Nayuki's QR Code generator](https://github.com/nayuki/QR-Code-generator). This package is an independent TypeScript implementation.
 
 Built by [@japofc](https://github.com/japofc).
 

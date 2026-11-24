@@ -286,9 +286,8 @@ const textFiles = [
   ...sourceFiles,
   join(root, 'README.md'),
   join(root, 'CHANGELOG.md'),
-  join(root, 'CONTRIBUTING.md'),
-  join(root, 'SECURITY.md'),
   join(root, 'package.json'),
+  ...walk(join(root, 'docs'), ['.md']),
 ];
 
 for (const pattern of stalePatterns) {

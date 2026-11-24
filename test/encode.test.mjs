@@ -222,6 +222,7 @@ test('binary payloads survive untouched', () => {
 test('toJSON exposes a stable snapshot shape', () => {
   const qr = QrCode.encodeText('HELLO', { boostEcc: false });
   const json = qr.toJSON();
+  assert.equal(json.generator, 'japqr');
   assert.equal(json.version, 1);
   assert.equal(json.size, 21);
   assert.equal(json.ecc, 'medium');

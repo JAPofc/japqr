@@ -26,6 +26,7 @@ export {
   utf8Encode,
   type SegmentTextOptions,
 } from './core/segments.js';
+export { AUTHOR, BRAND, HOMEPAGE, LICENSE, attributionComment } from './brand.js';
 export { SegmentMode, charCountBits } from './core/modes.js';
 export { BitBuffer } from './core/bit-buffer.js';
 export { QrMatrix } from './core/matrix.js';

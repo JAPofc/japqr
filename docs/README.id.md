@@ -45,7 +45,7 @@ yarn add japqr
 bun add japqr
 ```
 
-Butuh Node.js 16+ atau browser modern. Tanpa dependensi, tanpa modul native, tanpa peer dependency.
+Node.js 16+ atau browser modern. Tanpa dependensi, tanpa modul native.
 
 ---
 
@@ -210,6 +210,7 @@ qr.toSvgString({
   light: '#ffffff',                // warna modul terang
   scale: 8,                        // pixel per modul; hilangkan untuk SVG responsif
   includeXmlDeclaration: true,     // tambahkan <?xml ...?>
+  attribution: true,               // sisipkan <!-- japqr · @japofc · MIT -->
   title: 'Buka repositori',        // <title> dan aria-label
   id: 'qr-code',                   // atribut id opsional
   className: 'qr',                 // atribut class opsional
@@ -310,7 +311,7 @@ try {
 
 ## Kredit
 
-Encoder ini mengimplementasikan ISO/IEC 18004. Arsitekturnya — pemilihan versi yang ringkas, interleaving blok, dan masking berbasis skor penalty — terinspirasi dari [QR Code generator milik Nayuki](https://github.com/nayuki/QR-Code-generator), implementasi referensi dari algoritma tersebut. Package ini adalah implementasi TypeScript independen dengan segmentasi optimizer, renderer, CLI, dan test suite buatan sendiri.
+Mengimplementasikan ISO/IEC 18004. Arsitekturnya — pemilihan versi, interleaving blok, masking berbasis skor penalty — terinspirasi dari [QR Code generator milik Nayuki](https://github.com/nayuki/QR-Code-generator). Package ini implementasi TypeScript independen.
 
 Dibuat oleh [@japofc](https://github.com/japofc).
 
