@@ -1,0 +1,31 @@
+japqr
+Copyright (c) 2026 @japofc
+https://github.com/JAPofc/japqr
+
+This software is released under the MIT License (see LICENSE).
+
+The MIT License grants broad rights to use, copy, modify, merge, publish,
+distribute, sublicense and sell copies of the software, subject to one
+condition:
+
+    "The above copyright notice and this permission notice shall be included
+     in all copies or substantial portions of the Software."
+
+That condition applies to this package and to the output it generates.
+
+The @japofc attribution appears in:
+
+  - LICENSE and this NOTICE file
+  - package.json (author, funding, repository)
+  - the header of every source file
+  - the comment and <metadata> element of generated SVG documents
+  - QrCode.toJSON() as the "generator" field
+  - the japqr command line interface
+
+Stripping the attribution and redistributing the package under another name
+is a license violation, not a supported configuration. The library contains
+no technical enforcement: nothing breaks if the notice is removed, because
+enforcement would be hostile to the people who depend on this code. The
+licence is the enforcement.
+
+Questions: https://github.com/JAPofc/japqr/issues

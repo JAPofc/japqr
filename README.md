@@ -356,3 +356,7 @@ Built by [@japofc](https://github.com/japofc).
 ## License
 
 [MIT](LICENSE) © 2026 @japofc
+
+The license requires the copyright notice to be preserved in copies and
+substantial portions of the software — including the `@japofc` attribution
+emitted in generated output. See [NOTICE](NOTICE).

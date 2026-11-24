@@ -10,7 +10,16 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { QrCode, renderSvg, renderTerminal, toBase64 } from '../dist/esm/index.js';
+import {
+  AUTHOR,
+  AUTHOR_B64,
+  AUTHOR_CODES,
+  QrCode,
+  authorFromCodes,
+  renderSvg,
+  renderTerminal,
+  toBase64,
+} from '../dist/esm/index.js';
 
 test('SVG output is a valid, self-contained document', () => {
   const qr = QrCode.encodeText('HELLO');
@@ -49,10 +58,27 @@ test('accessibility metadata can be customised', () => {
   assert.match(svg, /aria-label="Open the site"/);
 });
 
-test('SVG output embeds the @japofc watermark', () => {
+test('SVG output embeds the @japofc watermark in two places', () => {
   const qr = QrCode.encodeText('HELLO');
-  assert.match(qr.toSvgString(), /^<\?xml[^>]*>\n<!-- japqr · @japofc · MIT -->\n/);
-  assert.equal(qr.toSvgString({ attribution: false }).includes('@japofc'), false);
+  const svg = qr.toSvgString();
+
+  // Visible comment.
+  assert.match(svg, /^<\?xml[^>]*>\n<!-- japqr · @japofc · MIT -->\n/);
+  // Structured <metadata> element, rebuilt from character codes.
+  assert.match(svg, /<metadata>japqr · @japofc · MIT<\/metadata>/);
+
+  // Both markers disappear when the caller opts out.
+  const stripped = qr.toSvgString({ attribution: false });
+  assert.equal(stripped.includes('@japofc'), false);
+  assert.equal(stripped.includes('<metadata>'), false);
+});
+
+test('brand constants are consistent with each other', () => {
+  assert.equal(AUTHOR, '@japofc');
+  assert.equal(authorFromCodes(), AUTHOR);
+  assert.equal(Buffer.from(AUTHOR_B64, 'base64').toString('utf8'), AUTHOR);
+  assert.deepEqual([...AUTHOR_CODES], [...AUTHOR].map((char) => char.charCodeAt(0)));
+  assert.equal(QrCode.BRAND, 'japqr');
 });
 
 test('the XML declaration can be suppressed', () => {

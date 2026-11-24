@@ -53,6 +53,7 @@ EXAMPLES
 `;
 
 const VERSION = readVersion();
+const AUTHOR = '@japofc';
 
 function readVersion() {
   try {
@@ -217,7 +218,7 @@ async function main() {
     return;
   }
   if (options.version) {
-    process.stdout.write(`${VERSION}\n`);
+    process.stdout.write(`japqr ${VERSION} · @japofc\n`);
     return;
   }
 

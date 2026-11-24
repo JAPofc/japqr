@@ -61,6 +61,9 @@ export interface DataUrlOptions extends SvgOptions {
 
 /** An immutable, fully rendered QR Code. */
 export class QrCode implements QrLike {
+  /** Package name, exposed for consumers that embed attribution themselves. */
+  public static readonly BRAND = BRAND;
+
   /** Version number, 1 to 40. */
   public readonly version: number;
 

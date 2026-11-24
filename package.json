@@ -87,6 +87,7 @@
     "bin",
     "README.md",
     "LICENSE",
+    "NOTICE",
     "CHANGELOG.md"
   ],
   "engines": {

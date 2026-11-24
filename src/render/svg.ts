@@ -13,7 +13,7 @@
  * @author @japofc
  */
 
-import { attributionComment } from '../brand.js';
+import { attributionComment, attributionMetadata } from '../brand.js';
 import type { QrLike } from '../core/qr-code.js';
 
 /** Options for the SVG renderer. */
@@ -70,11 +70,14 @@ export function renderSvg(qr: QrLike, options: SvgOptions = {}): string {
 
   const declaration = options.includeXmlDeclaration === false ? '' : '<?xml version="1.0" encoding="UTF-8"?>\n';
   const attribution = options.attribution === false ? '' : `${attributionComment()}\n`;
+  const metadata =
+    options.attribution === false ? '' : `  <metadata>${escapeText(attributionMetadata())}</metadata>\n`;
 
   return (
     `${declaration}${attribution}<svg xmlns="http://www.w3.org/2000/svg" viewBox="${offset} ${offset} ${dimension} ${dimension}"${sizeAttributes} ` +
     `shape-rendering="crispEdges" role="img" aria-label="${escapeAttribute(ariaLabel)}"${id}${className}>\n` +
     `  <title>${escapeText(title)}</title>\n` +
+    metadata +
     `  <rect x="${offset}" y="${offset}" width="${dimension}" height="${dimension}" fill="${light}"/>\n` +
     `  <path fill="${dark}" d="${buildPathData(qr)}"/>\n` +
     `</svg>\n`

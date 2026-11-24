@@ -318,3 +318,7 @@ Dibuat oleh [@japofc](https://github.com/japofc).
 ## Lisensi
 
 [MIT](../LICENSE) © 2026 @japofc
+
+Lisensi ini mewajibkan notice hak cipta tetap disertakan pada salinan dan
+bagian substansial dari software — termasuk atribusi `@japofc` pada output
+yang dihasilkan. Lihat [NOTICE](../NOTICE).
