@@ -234,9 +234,10 @@ function checkRelativeLinks(file) {
     return;
   }
   const text = readFileSync(file, 'utf8');
-  const links = [...text.matchAll(/\]\(([^)]+)\)/g)]
-    .map((match) => match[1])
-    .filter((link) => !/^(https?:|mailto:|#)/.test(link));
+  const links = [
+    ...[...text.matchAll(/\]\(([^)]+)\)/g)].map((match) => match[1]),
+    ...[...text.matchAll(/src="([^"]+)"/g)].map((match) => match[1]),
+  ].filter((link) => !/^(https?:|mailto:|#|data:)/.test(link));
 
   for (const link of links) {
     const path = link.split('#')[0];

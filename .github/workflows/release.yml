@@ -16,6 +16,8 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
     steps:
       - name: Checkout
@@ -49,6 +51,13 @@ jobs:
           fi
 
       - name: Publish
+        if: env.NPM_TOKEN != ''
         run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish skipped
+        if: env.NPM_TOKEN == ''
+        run: |
+          echo "::warning::NPM_TOKEN is not configured - build and tests passed, but the package was not published."
+          echo "Add an npm automation token under Settings > Secrets and variables > Actions."

@@ -1,10 +1,6 @@
 <div align="center">
 
-# japqr
-
-**Zero-dependency QR Code generator for Node.js, Bun, Deno and browsers.**
-
-All 40 versions · 4 error-correction levels · 8 mask patterns · SVG, terminal and canvas output
+<img src="docs/assets/hero.svg" alt="japqr — zero-dependency QR code generator" width="880">
 
 <p>
   <a href="https://www.npmjs.com/package/japqr"><img alt="npm version" src="https://img.shields.io/npm/v/japqr?style=flat-square&color=cb3837"></a>
@@ -31,6 +27,25 @@ All 40 versions · 4 error-correction levels · 8 mask patterns · SVG, terminal
 </p>
 
 </div>
+
+---
+
+## Features
+
+| | |
+| --- | --- |
+| ⚡ **Zero dependencies** | Nothing to install, audit or bundle but the library itself. |
+| 🎯 **All 40 versions** | Every version, every error-correction level, all 8 mask patterns. |
+| 🔀 **Smart segmentation** | Text is split into numeric / alphanumeric / byte runs and merged only when it saves bits. |
+| 🛡️ **Automatic ECC boosting** | Uses the highest error-correction level the payload still fits into. |
+| 🖼️ **Four output formats** | SVG, terminal, `<canvas>` and data URL, plus the raw boolean matrix. |
+| 📦 **Dual builds** | ESM and CommonJS behind a standard `exports` map, with TypeScript declarations. |
+
+<p align="center">
+  <img src="docs/assets/repo-qr.svg" width="168" alt="Scan to open the repository">
+  <br>
+  <sub>Scan to open the repository</sub>
+</p>
 
 ---
 
@@ -71,9 +86,9 @@ import { QrCode } from 'japqr';
 
 const qr = QrCode.encodeText('https://github.com/JAPofc/japqr');
 
-qr.version; // 3
-qr.size;    // 29
-qr.ecc;     // 'medium'
+qr.version; // 4
+qr.size;    // 33
+qr.ecc;     // 'high'
 qr.mask;    // 0-7
 
 const svg = qr.toSvgString();      // SVG document
@@ -260,6 +275,7 @@ Dark modules are merged into horizontal runs, so even a 177×177 code produces a
 ```html
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 29 29" shape-rendering="crispEdges" role="img" aria-label="QR code">
   <title>QR code</title>
+  <metadata>japqr · @japofc · MIT</metadata>
   <rect x="-4" y="-4" width="29" height="29" fill="#ffffff"/>
   <path fill="#000000" d="M0 0h7v1h-7z..."/>
 </svg>
@@ -349,14 +365,18 @@ try {
 
 ## Credits
 
-Implements ISO/IEC 18004. The architecture — version selection, block interleaving, penalty-scored masking — is inspired by [Nayuki's QR Code generator](https://github.com/nayuki/QR-Code-generator). This package is an independent TypeScript implementation.
+<div align="center">
+  <a href="https://github.com/JAPofc">
+    <img src="https://github.com/JAPofc.png" width="104" alt="@japofc" style="border-radius:50%">
+  </a>
+  <h3><a href="https://github.com/JAPofc">@japofc</a></h3>
+  <p>Built and maintained by <a href="https://github.com/JAPofc">J.AP</a>.</p>
+</div>
 
-Built by [@japofc](https://github.com/japofc).
+Implements ISO/IEC 18004. The architecture — version selection, block interleaving, penalty-scored masking — is inspired by [Nayuki's QR Code generator](https://github.com/nayuki/QR-Code-generator). This package is an independent TypeScript implementation.
 
 ## License
 
 [MIT](LICENSE) © 2026 @japofc
 
-The license requires the copyright notice to be preserved in copies and
-substantial portions of the software — including the `@japofc` attribution
-emitted in generated output. See [NOTICE](NOTICE).
+The license requires the copyright notice to be preserved in copies and substantial portions of the software — including the `@japofc` attribution emitted in generated output. See [NOTICE](NOTICE).

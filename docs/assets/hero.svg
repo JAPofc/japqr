@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 360" width="880" role="img" aria-label="japqr - zero-dependency QR code generator">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b0f14"/>
+      <stop offset="1" stop-color="#131c26"/>
+    </linearGradient>
+    <linearGradient id="scan" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#58a6ff" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#58a6ff" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#58a6ff" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="card">
+      <rect x="566" y="46" width="268" height="268" rx="18"/>
+    </clipPath>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="9" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="880" height="360" rx="26" fill="url(#bg)"/>
+
+  <!-- left: brand -->
+  <g>
+    <animate attributeName="opacity" from="0" to="1" begin="0s" dur="0.5s" fill="freeze"/>
+    <text x="56" y="112" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif"
+          font-size="66" font-weight="800" fill="#f0f6fc" letter-spacing="-2">japqr</text>
+    <text x="58" y="152" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif"
+          font-size="19" fill="#8b949e">Zero-dependency QR codes for Node, Bun, Deno &amp; the browser.</text>
+
+    <!-- install chip -->
+    <rect x="56" y="186" width="238" height="46" rx="10" fill="#161d26" stroke="#263039"/>
+    <text x="74" y="215" font-family="ui-monospace,SFMono-Regular,Menlo,monospace"
+          font-size="17" fill="#7ee787">npm i japqr</text>
+
+    <!-- feature ticks -->
+    <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" fill="#8b949e">
+      <circle cx="63" cy="266" r="3.5" fill="#7ee787"/>
+      <text x="76" y="271">40 versions · 4 ECC levels · 8 masks</text>
+      <circle cx="63" cy="296" r="3.5" fill="#7ee787"/>
+      <text x="76" y="301">SVG, terminal, canvas &amp; data URL</text>
+      <circle cx="63" cy="326" r="3.5" fill="#7ee787"/>
+      <text x="76" y="331">MIT · no runtime dependencies</text>
+    </g>
+  </g>
+
+  <!-- right: QR card -->
+  <g>
+    <animate attributeName="opacity" from="0" to="1" begin="0.15s" dur="0.7s" fill="freeze"/>
+    <rect x="566" y="46" width="268" height="268" rx="18"
+          fill="#ffffff" filter="url(#glow)" opacity="0.18"/>
+    <rect x="566" y="46" width="268" height="268" rx="18" fill="#ffffff"/>
+    <g transform="translate(586 66) scale(6.9091)">
+      <path d="M0 0h7v1h-7zM8 0h1v1h-1zM10 0h1v1h-1zM13 0h1v1h-1zM15 0h1v1h-1zM17 0h2v1h-2zM20 0h1v1h-1zM23 0h2v1h-2zM26 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM11 1h2v1h-2zM17 1h1v1h-1zM22 1h1v1h-1zM24 1h1v1h-1zM26 1h1v1h-1zM32 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM8 2h3v1h-3zM14 2h3v1h-3zM18 2h1v1h-1zM21 2h1v1h-1zM23 2h2v1h-2zM26 2h1v1h-1zM28 2h3v1h-3zM32 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM9 3h1v1h-1zM14 3h1v1h-1zM17 3h1v1h-1zM20 3h1v1h-1zM22 3h3v1h-3zM26 3h1v1h-1zM28 3h3v1h-3zM32 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM10 4h1v1h-1zM13 4h6v1h-6zM20 4h2v1h-2zM26 4h1v1h-1zM28 4h3v1h-3zM32 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM8 5h1v1h-1zM10 5h3v1h-3zM14 5h2v1h-2zM18 5h1v1h-1zM22 5h3v1h-3zM26 5h1v1h-1zM32 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM20 6h1v1h-1zM22 6h1v1h-1zM24 6h1v1h-1zM26 6h7v1h-7zM8 7h3v1h-3zM14 7h1v1h-1zM16 7h4v1h-4zM21 7h1v1h-1zM23 7h1v1h-1zM2 8h3v1h-3zM6 8h1v1h-1zM8 8h1v1h-1zM11 8h3v1h-3zM15 8h2v1h-2zM18 8h1v1h-1zM20 8h1v1h-1zM22 8h6v1h-6zM30 8h3v1h-3zM4 9h2v1h-2zM9 9h2v1h-2zM18 9h1v1h-1zM21 9h1v1h-1zM23 9h1v1h-1zM25 9h2v1h-2zM29 9h1v1h-1zM32 9h1v1h-1zM1 10h2v1h-2zM5 10h2v1h-2zM9 10h2v1h-2zM12 10h1v1h-1zM15 10h1v1h-1zM21 10h1v1h-1zM26 10h2v1h-2zM29 10h3v1h-3zM0 11h3v1h-3zM4 11h2v1h-2zM7 11h3v1h-3zM12 11h2v1h-2zM18 11h1v1h-1zM20 11h4v1h-4zM30 11h3v1h-3zM0 12h2v1h-2zM5 12h2v1h-2zM9 12h1v1h-1zM14 12h3v1h-3zM19 12h3v1h-3zM23 12h3v1h-3zM28 12h1v1h-1zM31 12h1v1h-1zM2 13h3v1h-3zM7 13h1v1h-1zM9 13h1v1h-1zM11 13h1v1h-1zM13 13h2v1h-2zM16 13h1v1h-1zM18 13h1v1h-1zM20 13h1v1h-1zM22 13h5v1h-5zM32 13h1v1h-1zM0 14h1v1h-1zM3 14h2v1h-2zM6 14h2v1h-2zM11 14h1v1h-1zM13 14h2v1h-2zM16 14h1v1h-1zM18 14h2v1h-2zM22 14h1v1h-1zM24 14h1v1h-1zM27 14h1v1h-1zM31 14h1v1h-1zM0 15h3v1h-3zM8 15h4v1h-4zM13 15h3v1h-3zM17 15h1v1h-1zM19 15h7v1h-7zM27 15h1v1h-1zM29 15h4v1h-4zM1 16h1v1h-1zM3 16h1v1h-1zM6 16h3v1h-3zM12 16h1v1h-1zM15 16h1v1h-1zM19 16h1v1h-1zM25 16h1v1h-1zM27 16h1v1h-1zM31 16h2v1h-2zM0 17h2v1h-2zM4 17h2v1h-2zM9 17h1v1h-1zM12 17h3v1h-3zM16 17h2v1h-2zM19 17h3v1h-3zM23 17h3v1h-3zM32 17h1v1h-1zM0 18h2v1h-2zM3 18h10v1h-10zM15 18h2v1h-2zM18 18h1v1h-1zM20 18h1v1h-1zM27 18h2v1h-2zM30 18h2v1h-2zM1 19h2v1h-2zM4 19h1v1h-1zM7 19h1v1h-1zM9 19h1v1h-1zM11 19h2v1h-2zM15 19h1v1h-1zM17 19h1v1h-1zM19 19h7v1h-7zM27 19h6v1h-6zM0 20h3v1h-3zM6 20h2v1h-2zM12 20h2v1h-2zM15 20h6v1h-6zM22 20h1v1h-1zM24 20h2v1h-2zM27 20h3v1h-3zM31 20h2v1h-2zM0 21h1v1h-1zM2 21h1v1h-1zM8 21h1v1h-1zM12 21h1v1h-1zM14 21h1v1h-1zM17 21h1v1h-1zM19 21h3v1h-3zM24 21h3v1h-3zM32 21h1v1h-1zM0 22h1v1h-1zM2 22h1v1h-1zM5 22h2v1h-2zM9 22h4v1h-4zM17 22h1v1h-1zM24 22h1v1h-1zM27 22h1v1h-1zM29 22h3v1h-3zM0 23h1v1h-1zM2 23h4v1h-4zM8 23h3v1h-3zM12 23h2v1h-2zM16 23h1v1h-1zM18 23h7v1h-7zM29 23h4v1h-4zM0 24h1v1h-1zM6 24h2v1h-2zM10 24h2v1h-2zM14 24h2v1h-2zM19 24h2v1h-2zM24 24h6v1h-6zM31 24h2v1h-2zM8 25h1v1h-1zM12 25h4v1h-4zM17 25h4v1h-4zM24 25h1v1h-1zM28 25h2v1h-2zM32 25h1v1h-1zM0 26h7v1h-7zM9 26h2v1h-2zM13 26h2v1h-2zM16 26h1v1h-1zM20 26h1v1h-1zM22 26h3v1h-3zM26 26h1v1h-1zM28 26h2v1h-2zM31 26h1v1h-1zM0 27h1v1h-1zM6 27h1v1h-1zM9 27h2v1h-2zM13 27h3v1h-3zM23 27h2v1h-2zM28 27h5v1h-5zM0 28h1v1h-1zM2 28h3v1h-3zM6 28h1v1h-1zM8 28h1v1h-1zM11 28h1v1h-1zM13 28h1v1h-1zM16 28h4v1h-4zM21 28h2v1h-2zM24 28h5v1h-5zM30 28h3v1h-3zM0 29h1v1h-1zM2 29h3v1h-3zM6 29h1v1h-1zM8 29h1v1h-1zM10 29h7v1h-7zM18 29h2v1h-2zM24 29h2v1h-2zM28 29h1v1h-1zM30 29h2v1h-2zM0 30h1v1h-1zM2 30h3v1h-3zM6 30h1v1h-1zM8 30h1v1h-1zM10 30h1v1h-1zM14 30h5v1h-5zM20 30h2v1h-2zM24 30h3v1h-3zM29 30h2v1h-2zM0 31h1v1h-1zM6 31h1v1h-1zM9 31h1v1h-1zM13 31h3v1h-3zM17 31h4v1h-4zM22 31h1v1h-1zM25 31h1v1h-1zM27 31h1v1h-1zM29 31h2v1h-2zM0 32h7v1h-7zM10 32h3v1h-3zM14 32h2v1h-2zM17 32h1v1h-1zM20 32h1v1h-1zM23 32h3v1h-3zM29 32h1v1h-1zM31 32h1v1h-1z" fill="#0d1117"/>
+    </g>
+
+    <!-- scan line -->
+    <g clip-path="url(#card)">
+      <rect x="566" y="16" width="268" height="34" fill="url(#scan)">
+        <animate attributeName="y" values="12;314;12" keyTimes="0;0.55;1" dur="2.8s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+  </g>
+</svg>

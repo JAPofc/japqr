@@ -1,10 +1,6 @@
 <div align="center">
 
-# japqr
-
-**Generator QR Code tanpa dependensi untuk Node.js, Bun, Deno, dan browser.**
-
-Seluruh 40 versi · 4 level error correction · 8 pola mask · output SVG, terminal, dan canvas
+<img src="assets/hero.svg" alt="japqr — generator QR code tanpa dependensi" width="880">
 
 <p>
   <a href="https://www.npmjs.com/package/japqr"><img alt="versi npm" src="https://img.shields.io/npm/v/japqr?style=flat-square&color=cb3837"></a>
@@ -33,6 +29,25 @@ Seluruh 40 versi · 4 level error correction · 8 pola mask · output SVG, termi
 
 ---
 
+## Fitur
+
+| | |
+| --- | --- |
+| ⚡ **Tanpa dependensi** | Tidak ada yang perlu diinstall, diaudit, atau dibundle selain library-nya. |
+| 🎯 **Seluruh 40 versi** | Semua versi, semua level error correction, semua 8 pola mask. |
+| 🔀 **Segmentasi cerdas** | Teks dipecah per run numeric / alphanumeric / byte, digabung hanya kalau hemat bit. |
+| 🛡️ **ECC boosting otomatis** | Pakai level koreksi tertinggi yang masih muat. |
+| 🖼️ **Empat format output** | SVG, terminal, `<canvas>`, dan data URL, plus matriks boolean mentah. |
+| 📦 **Dual build** | ESM dan CommonJS lewat `exports` map standar, lengkap dengan deklarasi TypeScript. |
+
+<p align="center">
+  <img src="assets/repo-qr.svg" width="168" alt="Scan untuk membuka repositori">
+  <br>
+  <sub>Scan untuk membuka repositori</sub>
+</p>
+
+---
+
 ## Instalasi
 
 ```bash
@@ -58,9 +73,9 @@ import { QrCode } from 'japqr';
 
 const qr = QrCode.encodeText('https://github.com/JAPofc/japqr');
 
-qr.version; // 3
-qr.size;    // 29
-qr.ecc;     // 'medium'
+qr.version; // 4
+qr.size;    // 33
+qr.ecc;     // 'high'
 qr.mask;    // 0-7
 
 const svg = qr.toSvgString();      // dokumen SVG
@@ -219,14 +234,6 @@ qr.toSvgString({
 
 Modul gelap digabung per baris horizontal, jadi kode 177×177 pun tetap menghasilkan `<path>` yang ringkas.
 
-```html
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 29 29" shape-rendering="crispEdges" role="img" aria-label="QR code">
-  <title>QR code</title>
-  <rect x="-4" y="-4" width="29" height="29" fill="#ffffff"/>
-  <path fill="#000000" d="M0 0h7v1h-7z..."/>
-</svg>
-```
-
 ### Terminal
 
 ```js
@@ -311,14 +318,18 @@ try {
 
 ## Kredit
 
-Mengimplementasikan ISO/IEC 18004. Arsitekturnya — pemilihan versi, interleaving blok, masking berbasis skor penalty — terinspirasi dari [QR Code generator milik Nayuki](https://github.com/nayuki/QR-Code-generator). Package ini implementasi TypeScript independen.
+<div align="center">
+  <a href="https://github.com/JAPofc">
+    <img src="https://github.com/JAPofc.png" width="104" alt="@japofc" style="border-radius:50%">
+  </a>
+  <h3><a href="https://github.com/JAPofc">@japofc</a></h3>
+  <p>Dibuat dan dirawat oleh <a href="https://github.com/JAPofc">J.AP</a>.</p>
+</div>
 
-Dibuat oleh [@japofc](https://github.com/japofc).
+Mengimplementasikan ISO/IEC 18004. Arsitekturnya — pemilihan versi, interleaving blok, masking berbasis skor penalty — terinspirasi dari [QR Code generator milik Nayuki](https://github.com/nayuki/QR-Code-generator). Package ini implementasi TypeScript independen.
 
 ## Lisensi
 
 [MIT](../LICENSE) © 2026 @japofc
 
-Lisensi ini mewajibkan notice hak cipta tetap disertakan pada salinan dan
-bagian substansial dari software — termasuk atribusi `@japofc` pada output
-yang dihasilkan. Lihat [NOTICE](../NOTICE).
+Lisensi ini mewajibkan notice hak cipta tetap disertakan pada salinan dan bagian substansial dari software — termasuk atribusi `@japofc` pada output yang dihasilkan. Lihat [NOTICE](../NOTICE).
