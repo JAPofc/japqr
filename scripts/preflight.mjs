@@ -228,6 +228,30 @@ if (existsSync(join(root, 'README.md'))) {
   fail('README.md is missing');
 }
 
+// Relative links must resolve, otherwise the README ships dead links.
+function checkRelativeLinks(file) {
+  if (!existsSync(file)) {
+    return;
+  }
+  const text = readFileSync(file, 'utf8');
+  const links = [...text.matchAll(/\]\(([^)]+)\)/g)]
+    .map((match) => match[1])
+    .filter((link) => !/^(https?:|mailto:|#)/.test(link));
+
+  for (const link of links) {
+    const path = link.split('#')[0];
+    if (!path) {
+      continue;
+    }
+    const target = resolve(dirname(file), path);
+    if (existsSync(target)) {
+      ok(`link resolves: ${relative(root, file)} -> ${path}`);
+    } else {
+      fail(`dead link: ${relative(root, file)} -> ${path}`);
+    }
+  }
+}
+
 if (existsSync(join(root, 'LICENSE'))) {
   const license = readFileSync(join(root, 'LICENSE'), 'utf8');
   if (/MIT/i.test(license) && license.includes('@japofc')) {
@@ -238,6 +262,9 @@ if (existsSync(join(root, 'LICENSE'))) {
 } else {
   fail('LICENSE is missing');
 }
+
+checkRelativeLinks(join(root, 'README.md'));
+checkRelativeLinks(join(root, 'docs', 'README.id.md'));
 
 if (existsSync(join(root, 'CHANGELOG.md'))) {
   const changelog = readFileSync(join(root, 'CHANGELOG.md'), 'utf8');
