@@ -183,6 +183,7 @@ cat payload.txt | japofc-qr [options]
       --dark <color>      Dark module colour  (default: #000000)
       --light <color>     Light module colour  (default: #ffffff)
       --title <text>      Accessible title for the SVG
+      --compact           Half-block terminal output (1 column per module)
       --no-xml            Omit the XML declaration
   -q, --quiet             Suppress the summary printed to stderr
   -h, --help              Show help
@@ -363,6 +364,28 @@ console.log(qr.toTerminalString({ dark: '██', light: '  ', margin: 2 }));
     ██  ██████  ██  ████  ██  ██
     ...
 ```
+
+The default uses two columns per module to keep the matrix square, so a dense
+symbol outgrows the terminal quickly: a version 17 code needs 178 columns.
+
+`compact` packs two modules into one character cell with the half-block glyphs
+`▀`, `▄` and `█`, halving both dimensions. The same version 17 code becomes
+**45 rows × 89 columns** — the only mode that fits a normal 80 to 120 column
+terminal, and the right choice for CLI tools such as WhatsApp pairing codes.
+
+```js
+console.log(qr.toTerminalString({ compact: true }));
+```
+
+```text
+  █▀▀▀▀▀█ ▄▄▀█▄ █ █▀▄█ ▀█████▄▀█ ▄█▀█▀▀▀▄██▄
+  █ ███ █ █▄▀▄▀ ▄▄ █▄█ ▄▄▀  ▄▄ ▄ ▄▀█   █ ██ ▀
+  █ ▀▀▀ █ █  █ █▀ ▄   ▀▄▄█▀▀▀▀█ ▀▀▀█ ██ ▀▄
+  ...
+```
+
+`compact` ignores `dark` and `light`; the quiet zone stays clear in both
+`invert` modes, so a dark terminal keeps its background.
 
 ### Canvas
 

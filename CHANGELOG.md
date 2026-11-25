@@ -5,6 +5,23 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-11-25
+
+Feature release. No breaking changes.
+
+### Added
+
+- Terminal `compact` option: packs two modules into one character cell with the
+  half-block glyphs `▀`, `▄` and `█`, halving both dimensions. A version 17
+  symbol drops from 89 rows × 178 columns to 45 rows × 89 columns, which is the
+  only way a dense code fits a normal terminal.
+- CLI flag `--compact`, for tools that print a pairing code in the terminal.
+
+### Tests
+
+- 7 new tests decode every compact cell back into its module rows and compare
+  the result with the original matrix, so the renderer is proven lossless.
+
 ## [1.1.0] - 2026-11-25
 
 Feature release. No breaking changes; everything added is additive.
@@ -90,6 +107,7 @@ Initial public release.
 - All 8 mask patterns round-trip.
 - Numeric, alphanumeric, byte, UTF-8 and emoji payloads round-trip.
 
+[1.2.0]: https://github.com/JAPofc/japqr/releases/tag/v1.2.0
 [1.1.0]: https://github.com/JAPofc/japqr/releases/tag/v1.1.0
 [1.0.1]: https://github.com/JAPofc/japqr/releases/tag/v1.0.1
 [1.0.0]: https://github.com/JAPofc/japqr/releases/tag/v1.0.0

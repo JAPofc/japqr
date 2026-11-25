@@ -317,6 +317,30 @@ console.log(qr.toTerminalString({ dark: '██', light: '  ', margin: 2 }));
     ...
 ```
 
+Default-nya pakai dua kolom per modul supaya matriks tetap persegi, jadi
+simbol yang padat cepat melampaui lebar terminal: kode versi 17 butuh 178
+kolom.
+
+`compact` memadatkan dua modul ke satu sel karakter lewat glyph half-block
+`▀`, `▄`, dan `█`, memangkas kedua dimensi jadi setengah. Kode versi 17 yang
+sama jadi **45 baris × 89 kolom** — satu-satunya mode yang muat di terminal
+80 sampai 120 kolom, dan pilihan yang tepat buat CLI seperti kode pairing
+WhatsApp.
+
+```js
+console.log(qr.toTerminalString({ compact: true }));
+```
+
+```text
+  █▀▀▀▀▀█ ▄▄▀█▄ █ █▀▄█ ▀█████▄▀█ ▄█▀█▀▀▀▄██▄
+  █ ███ █ █▄▀▄▀ ▄▄ █▄█ ▄▄▀  ▄▄ ▄ ▄▀█   █ ██ ▀
+  █ ▀▀▀ █ █  █ █▀ ▄   ▀▄▄█▀▀▀▀█ ▀▀▀█ ██ ▀▄
+  ...
+```
+
+`compact` mengabaikan `dark` dan `light`; quiet zone tetap kosong di kedua
+mode `invert`, jadi terminal gelap tetap mempertahankan background-nya.
+
 ### Canvas
 
 ```js

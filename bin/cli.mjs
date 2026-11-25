@@ -40,6 +40,7 @@ OPTIONS
       --dark <color>      Dark module colour  (default: #000000)
       --light <color>     Light module colour  (default: #ffffff)
       --title <text>      Accessible title for the SVG
+      --compact           Half-block terminal output (1 column per module)
       --no-xml            Omit the XML declaration
   -q, --quiet             Suppress the summary printed to stderr
   -h, --help              Show this help
@@ -99,6 +100,7 @@ function parseArguments(argv) {
     out: undefined,
     quiet: false,
     includeXmlDeclaration: true,
+    compact: false,
     help: false,
     version: false,
   };
@@ -138,6 +140,9 @@ function parseArguments(argv) {
         break;
       case '--no-xml':
         options.includeXmlDeclaration = false;
+        break;
+      case '--compact':
+        options.compact = true;
         break;
       case '-o':
       case '--out':
@@ -254,7 +259,12 @@ async function main() {
       });
       break;
     case 'terminal':
-      output = qr.toTerminalString({ margin: options.margin ?? 2, dark: options.dark, light: options.light });
+      output = qr.toTerminalString({
+        margin: options.margin ?? 2,
+        dark: options.dark,
+        light: options.light,
+        compact: options.compact,
+      });
       break;
     case 'data-url':
       output = `${qr.toDataUrl({ margin: options.margin, scale: options.scale, dark: options.dark, light: options.light })}\n`;
