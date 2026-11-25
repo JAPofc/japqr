@@ -5,18 +5,55 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.3.0] - 2026-11-25
+## [1.4.0] - 2026-11-25
 
-Maintenance release.
+Feature release. No breaking changes to the library API, but the supported
+runtime moved.
+
+### Added
+
+- **Payload builders.** `QrPayload.wifi()`, `.vCard()`, `.mecard()`, `.event()`,
+  `.geo()`, `.sms()`, `.email()`, `.tel()` and `.whatsapp()` produce the strings
+  phones recognise natively, escaping each format's reserved characters and
+  folding vCard lines to 75 octets. Encode with
+  `QrCode.encodeText(QrPayload.wifi({ ssid, password }))`.
+- **Module shapes.** `shape: 'dot' | 'rounded' | 'diamond'` redraws the data
+  modules and reuses one primitive through `<use>`. The three finder patterns
+  always stay square, because that is what a camera locks onto.
+- **Themes.** `theme: 'minimal' | 'neon' | 'glass' | 'ink'` sets palette, quiet
+  zone and shape in one call; explicit options always win over the theme.
+- **Frame.** `frame: true` wraps the symbol in a card with a call to action and a
+  signature, producing a finished asset instead of a bare code.
+- **Scan animation.** `animate: true` sweeps a highlight down the symbol, clipped
+  to the code so the quiet zone stays clean.
+- **Batch archive.** `encodeBatch(items)` writes a ZIP holding one PNG per item,
+  with no dependency — for event tickets, member cards and stock labels.
+- **JSON Schema** for `toJSON()` at `schemas/tojson.schema.json`, so consumers
+  can validate stored documents.
 
 ### Changed
 
 - **Node.js 22 is now the minimum supported version.** Node 20 reached end of
   life in April 2026, so the previous floor of 20 no longer pointed at a
-  supported runtime. The CI matrix now covers 22 and 24.
-- CI enforces a size budget on the browser bundle: 12 kB gzipped, so the PNG
-  encoder cannot silently push the `<script>` build past what a page should
-  carry. The bundle is currently 9.8 kB gzipped.
+  supported runtime. The CI matrix covers 22 and 24.
+- CI enforces a 16 kB gzipped budget on the browser bundle. The budget was set at
+  12 kB for 1.2.0, and the payload, styling and batch features pushed the bundle
+  to 12.7 kB — the guardrail caught the growth, and this is a deliberate
+  re-baseline rather than a silent one.
+
+### Changed (repository automation)
+
+- Dependabot keeps development dependencies and workflow actions current.
+- A weekly canary job installs the published package from the registry into an
+  empty directory and exercises the API, the CLI, the PNG and ZIP writers.
+- A weekly stale job closes issues and pull requests nobody is waiting for.
+
+### Tests
+
+- 86 -> 125. Payload strings are pinned exactly, the finder patterns are asserted
+  square in every shape, the ZIP is validated structurally including its CRC,
+  the public API is snapshotted so an export cannot change silently, and the PNG
+  bytes are pinned by hash.
 
 ## [1.2.0] - 2026-11-25
 
@@ -141,7 +178,7 @@ Initial public release.
 - All 8 mask patterns round-trip.
 - Numeric, alphanumeric, byte, UTF-8 and emoji payloads round-trip.
 
-[1.3.0]: https://github.com/JAPofc/japqr/releases/tag/v1.3.0
+[1.4.0]: https://github.com/JAPofc/japqr/releases/tag/v1.4.0
 [1.2.0]: https://github.com/JAPofc/japqr/releases/tag/v1.2.0
 [1.1.0]: https://github.com/JAPofc/japqr/releases/tag/v1.1.0
 [1.0.1]: https://github.com/JAPofc/japqr/releases/tag/v1.0.1

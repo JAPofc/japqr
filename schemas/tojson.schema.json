@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/JAPofc/japqr/main/schemas/tojson.schema.json",
+  "title": "japofc-qr toJSON() document",
+  "description": "Shape of the plain object returned by QrCode.toJSON() and accepted by QrCode.fromJSON(). The format is additive-only within a major version: fields may be added, never renamed or removed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["generator", "version", "size", "ecc", "mask", "modules"],
+  "properties": {
+    "generator": {
+      "const": "japofc-qr",
+      "description": "Package name, so a document can be traced back to its producer."
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 40,
+      "description": "ISO/IEC 18004 version number."
+    },
+    "size": {
+      "type": "integer",
+      "minimum": 21,
+      "maximum": 177,
+      "description": "Module count per side. Always version * 4 + 17."
+    },
+    "ecc": {
+      "enum": ["low", "medium", "quartile", "high"],
+      "description": "Error-correction level in use."
+    },
+    "mask": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 7,
+      "description": "Mask pattern in use."
+    },
+    "modules": {
+      "type": "array",
+      "minItems": 21,
+      "maxItems": 177,
+      "description": "One '0'/'1' string per row, '1' marking a dark module.",
+      "items": {
+        "type": "string",
+        "pattern": "^[01]{21,177}$"
+      }
+    }
+  }
+}

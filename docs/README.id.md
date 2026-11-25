@@ -246,6 +246,51 @@ Instance mengekspos `mode`, `numChars`, `data` (bit yang sudah diencode), `total
 
 ---
 
+## Payload
+
+HP mengenali beberapa format payload. `QrPayload` membangunnya untuk kamu,
+termasuk escaping yang disyaratkan tiap format, jadi kodenya membuka aplikasi
+yang benar — bukan sekadar kotak teks.
+
+```js
+import { QrCode, QrPayload } from 'japofc-qr';
+
+// Membuka pengaturan Wi-Fi
+const wifi = QrCode.encodeText(
+  QrPayload.wifi({ ssid: 'Cafe JAP', password: 'kopi;enak', hidden: true }),
+  { ecc: 'high' },
+);
+
+// Masuk ke aplikasi Kontak
+const contact = QrCode.encodeText(
+  QrPayload.vCard({
+    firstName: 'J',
+    lastName: 'AP',
+    organization: 'japofc',
+    phone: '+6281234567890',
+    email: 'hi@example.com',
+  }),
+  { ecc: 'high' },
+);
+```
+
+| Builder | Menghasilkan |
+| --- | --- |
+| `wifi({ ssid, password?, security?, hidden? })` | `WIFI:T:WPA;S:…;P:…;;` |
+| `vCard({ firstName, lastName, … })` | vCard 3.0, baris difold ke 75 oktet |
+| `mecard({ … })` | `MECARD:N:…;TEL:…;;` |
+| `event({ summary, start, end, … })` | Event iCalendar |
+| `geo({ latitude, longitude, query? })` | `geo:lat,lng` |
+| `sms({ phone, body? })` | `SMSTO:…` |
+| `email({ to, subject?, body? })` | `mailto:` |
+| `tel(phone)` | `tel:` |
+| `whatsapp({ phone, message? })` | `https://wa.me/…?text=…` |
+
+Semua builder mengembalikan string biasa, jadi bisa dikombinasikan dengan apa
+pun yang menerima teks.
+
+---
+
 ## Output
 
 ### SVG
@@ -344,6 +389,23 @@ console.log(qr.toTerminalString({ compact: true }));
 `compact` mengabaikan `dark` dan `light`; quiet zone tetap kosong di kedua
 mode `invert`, jadi terminal gelap tetap mempertahankan background-nya.
 
+#### Bentuk, tema, bingkai, dan animasi
+
+| Opsi | Nilai | Efek |
+| --- | --- | --- |
+| `shape` | `square` (default), `dot`, `rounded`, `diamond` | Menggambar ulang modul data. Ketiga finder pattern tetap persegi, karena itulah yang dikunci kamera. |
+| `theme` | `minimal`, `neon`, `glass`, `ink` | Set palet, quiet zone, dan bentuk dalam satu panggilan. |
+| `frame` | `true` atau `{ label, brand, padding, cornerRadius }` | Membungkus kode dalam kartu lengkap dengan ajakan dan tanda tangan. |
+| `animate` | `boolean` | Menyapu highlight ke bawah simbol, di-clip ke kode agar quiet zone tetap bersih. |
+
+Opsi eksplisit selalu menang atas tema, dan memberi warna `dark` menghapus
+gradien tema — kalau tidak, warna yang kamu minta akan tertimpa diam-diam.
+
+```js
+// Aset jadi, bukan sekadar kode polos
+qr.toSvgString({ theme: 'neon', frame: { label: 'Scan untuk terhubung' } });
+```
+
 ### Canvas
 
 ```js
@@ -385,6 +447,24 @@ const blob = await qr.toBlob();                        // image/svg+xml
 const png = await qr.toBlob({ type: 'image/png' });    // image/png
 await fetch('/upload', { method: 'POST', body: png });
 ```
+
+### Arsip batch
+
+`encodeBatch()` menulis ZIP berisi satu PNG per item, tanpa dependensi. Untuk
+tiket event, kartu anggota, dan label stok: daftar masuk, satu arsip keluar.
+
+```js
+import { encodeBatch } from 'japofc-qr';
+
+const zip = await encodeBatch(
+  peserta.map((orang) => ({ name: orang.id, text: orang.url })),
+  { png: { scale: 8 }, encode: { ecc: 'high' } },
+);
+await fs.promises.writeFile('badge.zip', zip);
+```
+
+Nama disanitasi untuk semua platform (`a/b` menjadi `a-b`), dan arsipnya memakai
+metode stored karena data PNG sudah terkompresi.
 
 ### Matriks mentah
 

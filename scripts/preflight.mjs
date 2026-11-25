@@ -215,6 +215,22 @@ for (const entry of pkg.files ?? []) {
   }
 }
 
+// 4b. Published schema -------------------------------------------------------
+section('Published schema');
+
+const SCHEMA = 'schemas/tojson.schema.json';
+
+if (existsSync(resolve(root, SCHEMA))) {
+  const schema = JSON.parse(readFileSync(resolve(root, SCHEMA), 'utf8'));
+  if (schema.required?.length > 0 && schema.properties?.modules) {
+    ok(`${SCHEMA} is valid JSON and describes the toJSON() document`);
+  } else {
+    fail(`${SCHEMA} is missing the required properties`);
+  }
+} else {
+  fail(`${SCHEMA} is missing`);
+}
+
 // 5. Watermark ---------------------------------------------------------------
 section('Watermark');
 

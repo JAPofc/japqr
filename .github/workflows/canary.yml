@@ -1,0 +1,64 @@
+name: Canary
+
+# Installs the package exactly as a user would — from the public registry, into
+# an empty directory — and exercises the real entry points. If a tarball is
+# broken, a file is missing from `files`, or the registry serves something
+# unexpected, this job is what notices it while nobody is looking.
+on:
+  schedule:
+    - cron: '17 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: Install from npm and run
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install the published package
+        run: |
+          mkdir -p "${RUNNER_TEMP}/canary"
+          cd "${RUNNER_TEMP}/canary"
+          npm init -y >/dev/null
+          npm install japofc-qr --no-audit --no-fund
+
+      - name: Exercise the public API
+        working-directory: ${{ runner.temp }}/canary
+        run: |
+          node --input-type=module <<'SCRIPT'
+          import { QrCode, QrPayload, encodeBatch } from 'japofc-qr';
+
+          const qr = QrCode.encodeText('https://github.com/JAPofc/japqr', { ecc: 'high' });
+
+          if (qr.size < 21) throw new Error('unexpected module count');
+          if (!qr.toSvgString().includes('<svg')) throw new Error('SVG renderer failed');
+          if (!qr.toTerminalString({ compact: true }).includes('▀')) throw new Error('compact renderer failed');
+
+          const png = await qr.toPngBuffer({ scale: 4 });
+          if (png[0] !== 137 || png[1] !== 80) throw new Error('PNG renderer failed');
+
+          const zip = await encodeBatch([{ name: 'canary', text: 'x' }]);
+          if (zip[0] !== 0x50 || zip[1] !== 0x4b) throw new Error('batch archive failed');
+
+          const wifi = QrPayload.wifi({ ssid: 'canary', password: 'secret' });
+          if (!wifi.startsWith('WIFI:')) throw new Error('payload builders failed');
+
+          console.log(`canary ok: ${qr.version} modules, ${png.length} byte PNG, ${zip.length} byte ZIP`);
+          SCRIPT
+
+      - name: Exercise the command line
+        working-directory: ${{ runner.temp }}/canary
+        run: |
+          npx japofc-qr "canary" -o canary.png --quiet
+          test -s canary.png
+
+      - name: Report the installed version
+        working-directory: ${{ runner.temp }}/canary
+        run: node -p "require('./node_modules/japofc-qr/package.json').version"

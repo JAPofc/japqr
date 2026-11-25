@@ -38,6 +38,7 @@
 | 🎯 **All 40 versions** | Every version, every error-correction level, all 8 mask patterns. |
 | 🔀 **Smart segmentation** | Text is split into numeric / alphanumeric / byte runs and merged only when it saves bits. |
 | 🛡️ **Automatic ECC boosting** | Uses the highest error-correction level the payload still fits into. |
+| 📇 **Payload builders** | Wi-Fi, vCard, calendar, geo and WhatsApp payloads, escaped correctly for each format. |
 | 🖼️ **Four output formats** | SVG, terminal, `<canvas>` and data URL, plus the raw boolean matrix. |
 | 📦 **Dual builds** | ESM and CommonJS behind a standard `exports` map, with TypeScript declarations. |
 
@@ -284,6 +285,51 @@ Instances expose `mode`, `numChars`, `data` (the encoded bits), `totalBits(versi
 
 ---
 
+## Payloads
+
+Phones recognise a handful of payload formats. `QrPayload` builds them for you,
+including the escaping each format requires, so the code opens the right app
+instead of a text box.
+
+```js
+import { QrCode, QrPayload } from 'japofc-qr';
+
+// Opens the Wi-Fi settings sheet
+const wifi = QrCode.encodeText(
+  QrPayload.wifi({ ssid: 'Cafe JAP', password: 'kopi;enak', hidden: true }),
+  { ecc: 'high' },
+);
+
+// Imports into Contacts
+const contact = QrCode.encodeText(
+  QrPayload.vCard({
+    firstName: 'J',
+    lastName: 'AP',
+    organization: 'japofc',
+    phone: '+6281234567890',
+    email: 'hi@example.com',
+  }),
+  { ecc: 'high' },
+);
+```
+
+| Builder | Produces |
+| --- | --- |
+| `wifi({ ssid, password?, security?, hidden? })` | `WIFI:T:WPA;S:…;P:…;;` |
+| `vCard({ firstName, lastName, … })` | vCard 3.0, lines folded to 75 octets |
+| `mecard({ … })` | `MECARD:N:…;TEL:…;;` |
+| `event({ summary, start, end, … })` | iCalendar event |
+| `geo({ latitude, longitude, query? })` | `geo:lat,lng` |
+| `sms({ phone, body? })` | `SMSTO:…` |
+| `email({ to, subject?, body? })` | `mailto:` |
+| `tel(phone)` | `tel:` |
+| `whatsapp({ phone, message? })` | `https://wa.me/…?text=…` |
+
+Every builder returns a plain string, so it composes with anything else that
+expects text.
+
+---
+
 ## Output
 
 ### SVG
@@ -390,6 +436,24 @@ console.log(qr.toTerminalString({ compact: true }));
 `compact` ignores `dark` and `light`; the quiet zone stays clear in both
 `invert` modes, so a dark terminal keeps its background.
 
+#### Shapes, themes, frames and animation
+
+| Option | Values | Effect |
+| --- | --- | --- |
+| `shape` | `square` (default), `dot`, `rounded`, `diamond` | Redraws the data modules. The three finder patterns always stay square, because that is what a camera locks onto. |
+| `theme` | `minimal`, `neon`, `glass`, `ink` | Sets palette, quiet zone and shape in one call. |
+| `frame` | `true` or `{ label, brand, padding, cornerRadius }` | Wraps the code in a card with a call to action and a signature. |
+| `animate` | `boolean` | Sweeps a highlight down the symbol, clipped to the code so the quiet zone stays clean. |
+
+Explicit options always win over the theme, and passing a `dark` colour drops the
+theme's gradient — otherwise the colour you asked for would be silently painted
+over.
+
+```js
+// A finished asset rather than a bare code
+qr.toSvgString({ theme: 'neon', frame: { label: 'Scan to connect' } });
+```
+
 ### Canvas
 
 ```js
@@ -432,6 +496,24 @@ const blob = await qr.toBlob();                        // image/svg+xml
 const png = await qr.toBlob({ type: 'image/png' });    // image/png
 await fetch('/upload', { method: 'POST', body: png });
 ```
+
+### Batch archive
+
+`encodeBatch()` writes a ZIP holding one PNG per item, with no dependency. For
+event tickets, member cards and stock labels: a list in, one archive out.
+
+```js
+import { encodeBatch } from 'japofc-qr';
+
+const zip = await encodeBatch(
+  attendees.map((person) => ({ name: person.id, text: person.url })),
+  { png: { scale: 8 }, encode: { ecc: 'high' } },
+);
+await fs.promises.writeFile('badges.zip', zip);
+```
+
+Names are sanitised for every platform (`a/b` becomes `a-b`), and the archive
+uses the stored method because PNG data is already compressed.
 
 ### Raw matrix
 

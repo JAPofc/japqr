@@ -115,7 +115,7 @@ jobs:
       - name: Enforce the browser bundle size budget
         run: |
           SIZE=$(gzip -c dist/browser/japofc-qr.min.js | wc -c)
-          LIMIT=12000
+          LIMIT=16000
           echo "browser bundle: ${SIZE} bytes gzipped (budget ${LIMIT})"
           if [ "$SIZE" -gt "$LIMIT" ]; then
             echo "::error::browser bundle is ${SIZE} bytes gzipped, over the ${LIMIT} byte budget"
