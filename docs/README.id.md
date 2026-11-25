@@ -60,7 +60,7 @@ yarn add japofc-qr
 bun add japofc-qr
 ```
 
-Node.js 16+ atau browser modern. Tanpa dependensi, tanpa modul native.
+Node.js 20+ atau browser modern. Tanpa dependensi, tanpa modul native.
 
 ---
 
@@ -94,8 +94,19 @@ console.log(qr.toSvgString());
 
 ### Browser
 
+Kalau pakai bundler, import seperti biasa:
+
+```js
+import { QrCode } from 'japofc-qr';
+```
+
+Tanpa bundler — `<script type="module">` polos atau satu file HTML — arahkan
+bare specifier ke CDN lewat import map:
+
 ```html
-<canvas id="qr"></canvas>
+<script type="importmap">
+  { "imports": { "japofc-qr": "https://cdn.jsdelivr.net/npm/japofc-qr/+esm" } }
+</script>
 
 <script type="module">
   import { QrCode } from 'japofc-qr';
@@ -112,6 +123,22 @@ console.log(qr.toSvgString());
   document.querySelector('img').src = qr.toDataUrl();
 </script>
 ```
+
+Atau lewati module sama sekali dengan bundle IIFE, yang membuka
+`window.JapofcQr`:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/japofc-qr/dist/browser/japofc-qr.min.js"></script>
+
+<script>
+  const qr = JapofcQr.QrCode.encodeText('https://example.com', { ecc: 'high' });
+  document.body.insertAdjacentHTML('beforeend', qr.toSvgString({ includeXmlDeclaration: false }));
+</script>
+```
+
+> Browser tidak bisa me-resolve bare specifier seperti `japofc-qr` sendirian —
+> tanpa import map atau bundler, import-nya melempar
+> `Failed to resolve module specifier`.
 
 ### Command line
 
@@ -191,11 +218,13 @@ Semua opsi bersifat opsional dan tervalidasi; nilai tidak valid melempar [`Inval
 | `getModule(x, y)` | `boolean` | Warna satu modul; `false` di luar grid. |
 | `toMatrix()` | `boolean[][]` | Salinan grid yang bisa dimodifikasi. |
 | `toBinaryStrings()` | `string[]` | Satu string `'0'`/`'1'` per baris — cocok untuk snapshot test. |
+| `toUint8Array()` | `Uint8Array` | Bitmap 1-bit terpadat, MSB duluan, tiap baris dipad ke batas byte. |
 | `toSvgString(options?)` | `string` | Dokumen SVG lengkap. |
 | `toTerminalString(options?)` | `string` | Unicode block art. |
 | `draw(canvas, options?)` | `void` | Menggambar ke elemen `<canvas>` yang sudah ada. |
 | `toDataUrl(options?)` | `string` | URL `data:image/svg+xml`. |
 | `toJSON()` | `object` | Objek polos untuk logging dan snapshot test. |
+| `QrCode.fromJSON(value)` | `QrCode` | Membangun ulang simbol dari output `toJSON()`; input divalidasi. |
 
 ### `QrSegment`
 
@@ -229,10 +258,51 @@ qr.toSvgString({
   title: 'Buka repositori',        // <title> dan aria-label
   id: 'qr-code',                   // atribut id opsional
   className: 'qr',                 // atribut class opsional
+  gradient: {                      // gradien linier, pengganti warna flat
+    from: '#0b0f14',
+    to: '#1f6feb',
+    angle: 45,                     // 0 = kiri ke kanan, 90 = atas ke bawah
+  },
+  logo: {                          // gambar di atas tengah simbol
+    data: 'data:image/png;base64,...',
+    width: 0.2,                    // pecahan lebar simbol, dibatasi 0.3
+    opacity: 1,
+  },
 });
 ```
 
 Modul gelap digabung per baris horizontal, jadi kode 177×177 pun tetap menghasilkan `<path>` yang ringkas.
+
+#### Gradien dan logo
+
+`gradient` mengganti warna `dark` yang flat dengan `<linearGradient>`. Jaga
+kedua stop tetap cukup gelap agar masih terbaca scanner, dan jaga kontrasnya
+terhadap `light`.
+
+`logo` menggambar gambar di atas tengah simbol. **Logo menutupi modul di
+bawahnya**, jadi payload hanya bertahan lewat error correction: encode dengan
+`ecc: 'high'` dan jaga logo di bawah seperlima lebar simbol. Opsinya dibatasi
+`0.3`, titik saat kamera konsumen mulai gagal memindai.
+
+```js
+const qr = QrCode.encodeText('https://example.com', { ecc: 'high' });
+qr.toSvgString({
+  gradient: { from: '#0b0f14', to: '#1f6feb', angle: 45 },
+  logo: { data: logoDataUrl, width: 0.18 },
+});
+```
+
+#### Menyimpan dan memuat ulang simbol
+
+`toJSON()` mengembalikan objek polos, dan `fromJSON()` membangun ulang simbol
+yang identik darinya — berguna untuk cache atau memindahkan kode antar proses
+tanpa encode ulang. Input yang rusak melempar `InvalidArgumentError`, bukan
+matriks yang tidak bisa dipindai.
+
+```js
+const cached = JSON.parse(fs.readFileSync('qr.json', 'utf8'));
+const qr = QrCode.fromJSON(cached);
+```
 
 ### Terminal
 

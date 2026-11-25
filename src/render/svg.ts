@@ -16,6 +16,33 @@
 import { attributionComment, attributionMetadata } from '../brand.js';
 import type { QrLike } from '../core/qr-code.js';
 
+/** Linear gradient applied to the dark modules. */
+export interface SvgGradient {
+  /** Colour at the start of the gradient. */
+  readonly from: string;
+  /** Colour at the end of the gradient. */
+  readonly to: string;
+  /**
+   * Direction of the gradient in degrees, clockwise from the positive x axis.
+   * `0` runs left to right, `90` top to bottom. Defaults to `45`.
+   */
+  readonly angle?: number;
+}
+
+/** Image embedded in the centre of the symbol. */
+export interface SvgLogo {
+  /** Image URL, usually a `data:` URL so the SVG stays self-contained. */
+  readonly data: string;
+  /**
+   * Logo width as a fraction of the symbol width. Defaults to `0.2` and is
+   * clamped to `0.3`: a logo covers the modules underneath it, so the payload
+   * only survives through error correction.
+   */
+  readonly width?: number;
+  /** Opacity of the logo, from `0` to `1`. Defaults to `1`. */
+  readonly opacity?: number;
+}
+
 /** Options for the SVG renderer. */
 export interface SvgOptions {
   /** Quiet zone width, in modules. Defaults to `4` (the spec minimum). */
@@ -44,6 +71,16 @@ export interface SvgOptions {
    * Set to `false` for byte-exact output requirements.
    */
   readonly attribution?: boolean;
+  /**
+   * Linear gradient for the dark modules, instead of a flat `dark` colour.
+   * Keep both stops dark enough to stay readable by scanners.
+   */
+  readonly gradient?: SvgGradient;
+  /**
+   * Image drawn over the centre of the symbol. Logos replace the modules
+   * beneath them, so encode with `ecc: 'high'` and keep the logo small.
+   */
+  readonly logo?: SvgLogo;
 }
 
 /** Default quiet zone, matching the ISO/IEC 18004 recommendation. */
@@ -68,6 +105,9 @@ export function renderSvg(qr: QrLike, options: SvgOptions = {}): string {
   const title = options.title ?? 'QR code';
   const ariaLabel = options.ariaLabel ?? title;
 
+  const gradient = buildGradient(options.gradient, options.id);
+  const logo = buildLogo(options.logo, qr.size, light);
+
   const declaration = options.includeXmlDeclaration === false ? '' : '<?xml version="1.0" encoding="UTF-8"?>\n';
   const attribution = options.attribution === false ? '' : `${attributionComment()}\n`;
   const metadata =
@@ -78,8 +118,10 @@ export function renderSvg(qr: QrLike, options: SvgOptions = {}): string {
     `shape-rendering="crispEdges" role="img" aria-label="${escapeAttribute(ariaLabel)}"${id}${className}>\n` +
     `  <title>${escapeText(title)}</title>\n` +
     metadata +
+    (gradient.defs ? `  <defs>${gradient.defs}</defs>\n` : '') +
     `  <rect x="${offset}" y="${offset}" width="${dimension}" height="${dimension}" fill="${light}"/>\n` +
-    `  <path fill="${dark}" d="${buildPathData(qr)}"/>\n` +
+    `  <path fill="${gradient.fill ?? dark}" d="${buildPathData(qr)}"/>\n` +
+    (logo ? `${logo}\n` : '') +
     `</svg>\n`
   );
 }
@@ -110,6 +152,59 @@ function buildPathData(qr: QrLike): string {
   }
 
   return parts.join('');
+}
+
+interface GradientResult {
+  readonly defs: string;
+  readonly fill: string | undefined;
+}
+
+/** Turns a {@link SvgGradient} option into a `<linearGradient>` definition. */
+function buildGradient(gradient: SvgGradient | undefined, idPrefix: string | undefined): GradientResult {
+  if (!gradient) {
+    return { defs: '', fill: undefined };
+  }
+
+  const id = `${idPrefix ? `${idPrefix}-` : ''}qr-gradient`;
+  const radians = ((gradient.angle ?? 45) * Math.PI) / 180;
+  const dx = Math.cos(radians) / 2;
+  const dy = Math.sin(radians) / 2;
+  const defs =
+    `<linearGradient id="${id}" x1="${round(0.5 - dx)}" y1="${round(0.5 - dy)}" ` +
+    `x2="${round(0.5 + dx)}" y2="${round(0.5 + dy)}">` +
+    `<stop offset="0" stop-color="${escapeAttribute(gradient.from)}"/>` +
+    `<stop offset="1" stop-color="${escapeAttribute(gradient.to)}"/>` +
+    `</linearGradient>`;
+
+  return { defs, fill: `url(#${id})` };
+}
+
+/**
+ * Builds the centred logo: a light plate clears the modules underneath so the
+ * image sits on a clean background, then the image is drawn on top.
+ */
+function buildLogo(logo: SvgLogo | undefined, size: number, light: string): string | undefined {
+  if (!logo) {
+    return undefined;
+  }
+
+  const requested = logo.width ?? 0.2;
+  const width = Math.min(0.3, Math.max(0.05, requested)) * size;
+  const origin = (size - width) / 2;
+  const opacity = logo.opacity === undefined ? 1 : Math.min(1, Math.max(0, logo.opacity));
+  const radius = round(width * 0.14);
+
+  return (
+    `  <rect x="${round(origin)}" y="${round(origin)}" width="${round(width)}" height="${round(width)}" ` +
+    `rx="${radius}" fill="${escapeAttribute(light)}"/>\n` +
+    `  <image href="${escapeAttribute(logo.data)}" x="${round(origin)}" y="${round(origin)}" ` +
+    `width="${round(width)}" height="${round(width)}" preserveAspectRatio="xMidYMid meet" opacity="${opacity}"/>`
+  );
+}
+
+/** Formats a coordinate without trailing zeros or floating point noise. */
+function round(value: number): number {
+  return Math.round(value * 1000) / 1000;
 }
 
 function escapeText(value: string): string {

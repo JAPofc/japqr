@@ -50,14 +50,24 @@ jobs:
             exit 1
           fi
 
-      - name: Publish
-        if: env.NPM_TOKEN != ''
+      - name: Publish (trusted publishing)
+        id: publish_oidc
+        # Falls through to the token step below when the package has no
+        # trusted publisher configured yet, so the release never breaks while
+        # the npm settings are being migrated.
+        continue-on-error: true
+        run: npm publish --provenance --access public
+
+      - name: Publish with token (fallback)
+        if: steps.publish_oidc.outcome == 'failure' && env.NPM_TOKEN != ''
         run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish skipped
-        if: env.NPM_TOKEN == ''
+      - name: Verify the package was published
+        if: steps.publish_oidc.outcome == 'failure' && env.NPM_TOKEN == ''
         run: |
-          echo "::warning::NPM_TOKEN is not configured - build and tests passed, but the package was not published."
-          echo "Add an npm automation token under Settings > Secrets and variables > Actions."
+          echo "::error::Publish failed and no NPM_TOKEN fallback is configured."
+          echo "Add a trusted publisher under https://www.npmjs.com/package/japofc-qr/access"
+          echo "(GitHub Actions, owner JAPofc, repository japqr, workflow release.yml)"
+          exit 1

@@ -215,6 +215,27 @@ export class QrCode implements QrLike {
     return this.modules.map((row) => row.map((dark) => (dark ? '1' : '0')).join(''));
   }
 
+  /**
+   * Packed monochrome bitmap: one bit per module, MSB first, with each row
+   * padded to a byte boundary. A set bit marks a dark module.
+   *
+   * Useful for e-ink displays, thermal and label printers, and any device that
+   * wants a compact frame buffer instead of a nested array.
+   */
+  public toUint8Array(): Uint8Array {
+    const rowBytes = Math.ceil(this.size / 8);
+    const bytes = new Uint8Array(rowBytes * this.size);
+    for (let y = 0; y < this.size; y += 1) {
+      const row = this.modules[y];
+      for (let x = 0; x < this.size; x += 1) {
+        if (row[x]) {
+          bytes[y * rowBytes + (x >> 3)] |= 0x80 >> (x & 7);
+        }
+      }
+    }
+    return bytes;
+  }
+
   // ---------------------------------------------------------------------------
   // Rendering
   // ---------------------------------------------------------------------------
@@ -269,6 +290,48 @@ export class QrCode implements QrLike {
       mask: this.mask,
       modules: this.toBinaryStrings(),
     };
+  }
+
+  /**
+   * Rebuilds a symbol from the output of {@link QrCode.toJSON}.
+   *
+   * Useful for caching a rendered symbol or moving it across a process
+   * boundary without re-encoding the payload. The input is validated: a
+   * malformed document throws {@link InvalidArgumentError} instead of
+   * producing a matrix that cannot be scanned.
+   */
+  public static fromJSON(value: unknown): QrCode {
+    if (typeof value !== 'object' || value === null) {
+      throw new InvalidArgumentError('fromJSON() expects the object returned by toJSON().');
+    }
+
+    const { version, ecc, mask, modules } = value as Record<string, unknown>;
+
+    if (typeof version !== 'number' || !Number.isInteger(version) || version < MIN_VERSION || version > MAX_VERSION) {
+      throw new InvalidArgumentError(`fromJSON(): version must be an integer between ${MIN_VERSION} and ${MAX_VERSION}.`);
+    }
+    if (typeof ecc !== 'string' || !ECC_LEVELS.includes(ecc as EccLevel)) {
+      throw new InvalidArgumentError('fromJSON(): unknown error-correction level.');
+    }
+    if (typeof mask !== 'number' || !Number.isInteger(mask) || mask < 0 || mask > 7) {
+      throw new InvalidArgumentError('fromJSON(): mask must be an integer between 0 and 7.');
+    }
+
+    const size = version * 4 + 17;
+    if (!Array.isArray(modules) || modules.length !== size) {
+      throw new InvalidArgumentError(
+        `fromJSON(): expected ${size} rows, received ${Array.isArray(modules) ? modules.length : 'none'}.`,
+      );
+    }
+
+    const parsed = modules.map((row, index) => {
+      if (typeof row !== 'string' || row.length !== size || /[^01]/.test(row)) {
+        throw new InvalidArgumentError(`fromJSON(): row ${index} must be a ${size}-character string of 0 and 1.`);
+      }
+      return [...row].map((cell) => cell === '1');
+    });
+
+    return new QrCode({ version, ecc: ecc as EccLevel, mask: mask as MaskPattern, modules: parsed });
   }
 
   // ---------------------------------------------------------------------------

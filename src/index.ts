@@ -43,7 +43,7 @@ export { QrMatrix } from './core/matrix.js';
 export { rsComputeDivisor, rsComputeRemainder, rsEncode } from './core/reed-solomon.js';
 export { gfMultiply, gfPow } from './core/galois-field.js';
 export * from './core/errors.js';
-export { renderSvg, type SvgOptions } from './render/svg.js';
+export { renderSvg, type SvgOptions, type SvgGradient, type SvgLogo } from './render/svg.js';
 export { renderTerminal, type TerminalOptions } from './render/terminal.js';
 export { drawToCanvas, type CanvasOptions } from './render/canvas.js';
 export { toBase64 } from './render/base64.js';

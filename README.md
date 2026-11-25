@@ -61,7 +61,7 @@ yarn add japofc-qr
 bun add japofc-qr
 ```
 
-Node.js 16+ or any modern browser. No dependencies, no native modules.
+Node.js 20+ or any modern browser. No dependencies, no native modules.
 
 <details>
 <summary><strong>Use it from a CDN</strong></summary>
@@ -107,8 +107,19 @@ console.log(qr.toSvgString());
 
 ### Browser
 
+With a bundler, import the package normally:
+
+```js
+import { QrCode } from 'japofc-qr';
+```
+
+Without one — a plain `<script type="module">` or a single HTML file — point the
+bare specifier at a CDN with an import map:
+
 ```html
-<canvas id="qr"></canvas>
+<script type="importmap">
+  { "imports": { "japofc-qr": "https://cdn.jsdelivr.net/npm/japofc-qr/+esm" } }
+</script>
 
 <script type="module">
   import { QrCode } from 'japofc-qr';
@@ -125,6 +136,21 @@ console.log(qr.toSvgString());
   document.querySelector('img').src = qr.toDataUrl();
 </script>
 ```
+
+Or skip modules entirely with the bundled IIFE, which exposes `window.JapofcQr`:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/japofc-qr/dist/browser/japofc-qr.min.js"></script>
+
+<script>
+  const qr = JapofcQr.QrCode.encodeText('https://example.com', { ecc: 'high' });
+  document.body.insertAdjacentHTML('beforeend', qr.toSvgString({ includeXmlDeclaration: false }));
+</script>
+```
+
+> Browsers cannot resolve bare specifiers such as `japofc-qr` on their own —
+> without an import map or a bundler the import throws
+> `Failed to resolve module specifier`.
 
 ### Command line
 
@@ -229,11 +255,13 @@ All options are optional and validated; invalid values throw an [`InvalidArgumen
 | `getModule(x, y)` | `boolean` | Colour of a module; `false` outside the grid. |
 | `toMatrix()` | `boolean[][]` | Mutable copy of the grid. |
 | `toBinaryStrings()` | `string[]` | One `'0'`/`'1'` string per row — ideal for snapshots. |
+| `toUint8Array()` | `Uint8Array` | Packed 1-bit bitmap, MSB first, rows padded to a byte boundary. |
 | `toSvgString(options?)` | `string` | Standalone SVG document. |
 | `toTerminalString(options?)` | `string` | Unicode block art. |
 | `draw(canvas, options?)` | `void` | Paints an existing `<canvas>` element. |
 | `toDataUrl(options?)` | `string` | `data:image/svg+xml` URL. |
 | `toJSON()` | `object` | Plain object for logging and snapshot tests. |
+| `QrCode.fromJSON(value)` | `QrCode` | Rebuilds a symbol from `toJSON()` output; validates the input. |
 
 ### `QrSegment`
 
@@ -267,6 +295,16 @@ qr.toSvgString({
   title: 'Open the repository',    // <title> and aria-label
   id: 'qr-code',                   // optional id attribute
   className: 'qr',                 // optional class attribute
+  gradient: {                      // linear gradient instead of a flat colour
+    from: '#0b0f14',
+    to: '#1f6feb',
+    angle: 45,                     // 0 = left to right, 90 = top to bottom
+  },
+  logo: {                          // image drawn over the centre
+    data: 'data:image/png;base64,...',
+    width: 0.2,                    // fraction of the symbol width, clamped to 0.3
+    opacity: 1,
+  },
 });
 ```
 
@@ -279,6 +317,38 @@ Dark modules are merged into horizontal runs, so even a 177×177 code produces a
   <rect x="-4" y="-4" width="29" height="29" fill="#ffffff"/>
   <path fill="#000000" d="M0 0h7v1h-7z..."/>
 </svg>
+```
+
+#### Gradient and logo
+
+`gradient` replaces the flat `dark` fill with a `<linearGradient>`. Keep both
+stops dark enough to stay readable by scanners, and keep the contrast with
+`light` high.
+
+`logo` paints an image over the centre of the symbol. **It covers the modules
+underneath it**, so the payload survives only through error correction: encode
+with `ecc: 'high'` and keep the logo under a fifth of the symbol width. The
+option is clamped to `0.3`, which is the point where consumer cameras start to
+fail.
+
+```js
+const qr = QrCode.encodeText('https://example.com', { ecc: 'high' });
+qr.toSvgString({
+  gradient: { from: '#0b0f14', to: '#1f6feb', angle: 45 },
+  logo: { data: logoDataUrl, width: 0.18 },
+});
+```
+
+#### Storing and restoring a symbol
+
+`toJSON()` returns a plain object, and `fromJSON()` rebuilds an identical
+symbol from it — useful for caching or moving a code across a process boundary
+without re-encoding. Malformed input throws `InvalidArgumentError` rather than
+producing a matrix that cannot be scanned.
+
+```js
+const cached = JSON.parse(fs.readFileSync('qr.json', 'utf8'));
+const qr = QrCode.fromJSON(cached);
 ```
 
 ### Terminal

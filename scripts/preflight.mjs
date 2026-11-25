@@ -149,6 +149,34 @@ for (const [subpath, targets] of Object.entries(pkg.exports ?? {})) {
   }
 }
 
+// 2b. Build outputs ----------------------------------------------------------
+section('Build outputs');
+
+const BROWSER_BUNDLE = 'dist/browser/japofc-qr.min.js';
+const BROWSER_TYPES = 'dist/browser/japofc-qr.d.ts';
+
+if (checkFile('browser bundle', BROWSER_BUNDLE)) {
+  const bundle = readFileSync(resolve(root, BROWSER_BUNDLE), 'utf8');
+  if (bundle.includes('JapofcQr')) {
+    ok('browser bundle exposes the JapofcQr global');
+  } else {
+    fail('browser bundle does not expose the JapofcQr global');
+  }
+  if (bundle.includes('@japofc')) {
+    ok('browser bundle carries the @japofc watermark');
+  } else {
+    fail('browser bundle lost the @japofc watermark banner');
+  }
+  if (bundle.includes('sourceMappingURL')) {
+    warn('browser bundle references a source map that is not published');
+  } else {
+    ok('browser bundle has no dangling source map reference');
+  }
+}
+
+checkFile('browser types', BROWSER_TYPES);
+checkFile('CommonJS build', 'dist/cjs/index.js');
+
 // 3. Bin files ---------------------------------------------------------------
 section('Binaries');
 
