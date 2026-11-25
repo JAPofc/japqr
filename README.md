@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/assets/hero.svg" alt="japofc-qr — zero-dependency QR code generator" width="880">
+<img src="https://raw.githubusercontent.com/JAPofc/japqr/main/docs/assets/hero.svg" alt="japofc-qr — zero-dependency QR code generator" width="880">
 
 <p>
   <a href="https://www.npmjs.com/package/japofc-qr"><img alt="npm version" src="https://img.shields.io/npm/v/japofc-qr?style=flat-square&color=cb3837"></a>
@@ -42,7 +42,7 @@
 | 📦 **Dual builds** | ESM and CommonJS behind a standard `exports` map, with TypeScript declarations. |
 
 <p align="center">
-  <img src="docs/assets/repo-qr.svg" width="168" alt="Scan to open the repository">
+  <img src="https://raw.githubusercontent.com/JAPofc/japqr/main/docs/assets/repo-qr.svg" width="168" alt="Scan to open the repository">
   <br>
   <sub>Scan to open the repository</sub>
 </p>

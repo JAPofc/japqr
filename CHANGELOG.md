@@ -5,6 +5,17 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-11-24
+
+Documentation release. No changes to the library API or runtime behaviour.
+
+### Fixed
+
+- README hero: the tagline no longer runs underneath the QR card, which had
+  clipped the last word mid-way.
+- README images now point at absolute URLs, so the hero renders on the npm
+  package page as well as on GitHub.
+
 ## [1.0.0] - 2026-11-24
 
 Initial public release.
@@ -34,4 +45,5 @@ Initial public release.
 - All 8 mask patterns round-trip.
 - Numeric, alphanumeric, byte, UTF-8 and emoji payloads round-trip.
 
+[1.0.1]: https://github.com/JAPofc/japqr/releases/tag/v1.0.1
 [1.0.0]: https://github.com/JAPofc/japqr/releases/tag/v1.0.0
