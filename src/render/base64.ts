@@ -44,7 +44,7 @@ export function toBase64(input: string): string {
 }
 
 /** Pure-JS base64 encoder for environments without `btoa` or `Buffer`. */
-function bytesToBase64(bytes: readonly number[]): string {
+export function bytesToBase64(bytes: ArrayLike<number>): string {
   let output = '';
   for (let i = 0; i < bytes.length; i += 3) {
     const b0 = bytes[i];

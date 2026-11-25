@@ -37,7 +37,8 @@ import {
 import { renderSvg, type SvgOptions } from '../render/svg.js';
 import { renderTerminal, type TerminalOptions } from '../render/terminal.js';
 import { drawToCanvas, type CanvasOptions } from '../render/canvas.js';
-import { toBase64 } from '../render/base64.js';
+import { bytesToBase64, toBase64 } from '../render/base64.js';
+import { renderPng, type BlobOptions, type PngOptions } from '../render/png.js';
 
 /** Shape accepted by every renderer. */
 export interface QrLike {
@@ -267,6 +268,35 @@ export class QrCode implements QrLike {
   // ---------------------------------------------------------------------------
   // Introspection
   // ---------------------------------------------------------------------------
+
+  /**
+   * Encodes the symbol as a PNG.
+   *
+   * Returns a promise because the DEFLATE codec is stream based; that is what
+   * keeps the package free of native dependencies and lets the same code run in
+   * Node, Bun, Deno and the browser.
+   */
+  public async toPngBuffer(options: PngOptions = {}): Promise<Uint8Array> {
+    return renderPng(this, options);
+  }
+
+  /** `data:image/png;base64,...` URL, ready for an `<img>` or a database column. */
+  public async toPngDataUrl(options: PngOptions = {}): Promise<string> {
+    return `data:image/png;base64,${bytesToBase64(await renderPng(this, options))}`;
+  }
+
+  /**
+   * Blob for `FormData` uploads, object URLs and `fetch` bodies. Defaults to
+   * SVG, which is smaller and resolution independent; pass `type: 'image/png'`
+   * when the consumer cannot decode SVG.
+   */
+  public async toBlob(options: BlobOptions = {}): Promise<Blob> {
+    if (options.type === 'image/png') {
+      const bytes = await renderPng(this, options);
+      return new Blob([bytes.buffer as ArrayBuffer], { type: 'image/png' });
+    }
+    return new Blob([this.toSvgString(options)], { type: 'image/svg+xml' });
+  }
 
   /** Compact human-readable summary. */
   public toString(): string {

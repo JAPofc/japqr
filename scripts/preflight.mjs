@@ -144,8 +144,13 @@ for (const [subpath, targets] of Object.entries(pkg.exports ?? {})) {
   if (subpath === './package.json') {
     continue;
   }
-  for (const [condition, target] of Object.entries(targets)) {
-    allEntriesExist = checkFile(`exports["${subpath}"].${condition}`, target) && allEntriesExist;
+  for (const [condition, value] of Object.entries(targets)) {
+    // A condition is either a plain path or a nested { types, default } pair.
+    const nested = typeof value === 'string' ? { default: value } : value;
+    for (const [inner, target] of Object.entries(nested)) {
+      allEntriesExist =
+        checkFile(`exports["${subpath}"].${condition}.${inner}`, target) && allEntriesExist;
+    }
   }
 }
 
@@ -176,6 +181,7 @@ if (checkFile('browser bundle', BROWSER_BUNDLE)) {
 
 checkFile('browser types', BROWSER_TYPES);
 checkFile('CommonJS build', 'dist/cjs/index.js');
+checkFile('CommonJS types', 'dist/cjs/index.d.ts');
 
 // 3. Bin files ---------------------------------------------------------------
 section('Binaries');

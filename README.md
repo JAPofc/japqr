@@ -172,7 +172,7 @@ japofc-qr <text> [options]
 cat payload.txt | japofc-qr [options]
 
   -o, --out <file>        Write to a file instead of stdout
-  -f, --format <format>   svg | terminal | data-url | json | matrix  (default: svg)
+  -f, --format <format>   svg | png | terminal | data-url | json | matrix  (default: svg)
   -e, --ecc <level>       low | medium | quartile | high  (or L, M, Q, H)
   -m, --margin <modules>  Quiet zone width in modules  (default: 4)
   -s, --scale <px>        Pixels per module for SVG output
@@ -261,6 +261,9 @@ All options are optional and validated; invalid values throw an [`InvalidArgumen
 | `toTerminalString(options?)` | `string` | Unicode block art. |
 | `draw(canvas, options?)` | `void` | Paints an existing `<canvas>` element. |
 | `toDataUrl(options?)` | `string` | `data:image/svg+xml` URL. |
+| `toPngBuffer(options?)` | `Promise<Uint8Array>` | Encoded PNG. |
+| `toPngDataUrl(options?)` | `Promise<string>` | `data:image/png;base64` URL. |
+| `toBlob(options?)` | `Promise<Blob>` | SVG or PNG blob for uploads. |
 | `toJSON()` | `object` | Plain object for logging and snapshot tests. |
 | `QrCode.fromJSON(value)` | `QrCode` | Rebuilds a symbol from `toJSON()` output; validates the input. |
 
@@ -398,6 +401,36 @@ qr.draw(document.querySelector('#qr'), { margin: 4, scale: 8, dark: '#111', ligh
 ```js
 qr.toDataUrl();                     // base64
 qr.toDataUrl({ encoding: 'uri' });  // percent-encoded, smaller for short codes
+```
+
+### PNG
+
+The PNG encoder has no dependency: DEFLATE comes from the platform's
+`CompressionStream` and the container is written by hand, so the same code runs
+in Node, Bun, Deno and the browser. It is async because the codec is stream
+based.
+
+```js
+const buffer = await qr.toPngBuffer({ scale: 8 });
+await fs.promises.writeFile('qr.png', buffer);
+
+// or as a data URL
+const url = await qr.toPngDataUrl();
+```
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `scale` | `8` | Pixels per module. |
+| `margin` | `4` | Quiet zone, in modules. |
+| `dark` | `#000000` | Dark module colour. Hex only: `#rgb` or `#rrggbb`. |
+| `light` | `#ffffff` | Light module colour. Hex only. |
+
+`toBlob()` wraps either format for uploads and object URLs:
+
+```js
+const blob = await qr.toBlob();                        // image/svg+xml
+const png = await qr.toBlob({ type: 'image/png' });    // image/png
+await fetch('/upload', { method: 'POST', body: png });
 ```
 
 ### Raw matrix

@@ -48,6 +48,10 @@ writePackageJson('esm', 'module');
 await bundleTo('cjs', 'dist/cjs/index.js', 'cjs', 'node');
 writePackageJson('cjs', 'commonjs');
 
+// A CJS consumer must get `.d.cts` types: pointing `require` at the ESM
+// declarations makes TypeScript treat a CommonJS module as ESM.
+emitCommonJsTypes();
+
 await bundleBrowser();
 
 console.log('\nBuild complete:');
@@ -55,6 +59,43 @@ console.log('  ESM    -> dist/esm/index.js');
 console.log('  CJS    -> dist/cjs/index.js');
 console.log('  d.ts   -> dist/esm/index.d.ts');
 console.log('  browser-> dist/browser/japofc-qr.min.js');
+
+/**
+ * Emits a second declaration tree for CommonJS consumers and renames it to
+ * `.d.cts`, which is what TypeScript looks for under the `require` condition.
+ */
+function emitCommonJsTypes() {
+  console.log('> tsc --emitDeclarationOnly -> dist/cjs/*.d.ts');
+  execFileSync(
+    process.execPath,
+    [
+      tsc,
+      '-p',
+      'tsconfig.json',
+      '--noEmit',
+      'false',
+      '--emitDeclarationOnly',
+      '--declaration',
+      '--declarationMap',
+      'false',
+      '--sourceMap',
+      'false',
+      '--outDir',
+      'dist/cjs',
+      '--rootDir',
+      'src',
+      '--module',
+      'Preserve',
+      '--moduleResolution',
+      'Bundler',
+    ],
+    { cwd: root, stdio: 'inherit' },
+  );
+
+  // No rename: the declarations stay `.d.ts`, but they sit next to a
+  // `package.json` that declares `"type": "commonjs"`, so TypeScript reads
+  // them as CommonJS declarations for the `require` condition.
+}
 
 /** Bundles the ESM build into a different module format. */
 async function bundleTo(outdir, outfile, format, platform) {

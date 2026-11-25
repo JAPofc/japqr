@@ -223,6 +223,9 @@ Semua opsi bersifat opsional dan tervalidasi; nilai tidak valid melempar [`Inval
 | `toTerminalString(options?)` | `string` | Unicode block art. |
 | `draw(canvas, options?)` | `void` | Menggambar ke elemen `<canvas>` yang sudah ada. |
 | `toDataUrl(options?)` | `string` | URL `data:image/svg+xml`. |
+| `toPngBuffer(options?)` | `Promise<Uint8Array>` | PNG ter-encode. |
+| `toPngDataUrl(options?)` | `Promise<string>` | URL `data:image/png;base64`. |
+| `toBlob(options?)` | `Promise<Blob>` | Blob SVG atau PNG untuk upload. |
 | `toJSON()` | `object` | Objek polos untuk logging dan snapshot test. |
 | `QrCode.fromJSON(value)` | `QrCode` | Membangun ulang simbol dari output `toJSON()`; input divalidasi. |
 
@@ -352,6 +355,35 @@ qr.draw(document.querySelector('#qr'), { margin: 4, scale: 8, dark: '#111', ligh
 ```js
 qr.toDataUrl();                     // base64
 qr.toDataUrl({ encoding: 'uri' });  // percent-encoded, lebih kecil untuk kode pendek
+```
+
+### PNG
+
+Encoder PNG-nya tanpa dependensi: DEFLATE datang dari `CompressionStream`
+bawaan platform dan kontainernya ditulis manual, jadi kode yang sama jalan di
+Node, Bun, Deno, dan browser. Asinkron karena codec-nya berbasis stream.
+
+```js
+const buffer = await qr.toPngBuffer({ scale: 8 });
+await fs.promises.writeFile('qr.png', buffer);
+
+// atau sebagai data URL
+const url = await qr.toPngDataUrl();
+```
+
+| Opsi | Default | Keterangan |
+| --- | --- | --- |
+| `scale` | `8` | Pixel per modul. |
+| `margin` | `4` | Quiet zone, dalam modul. |
+| `dark` | `#000000` | Warna modul gelap. Hex saja: `#rgb` atau `#rrggbb`. |
+| `light` | `#ffffff` | Warna modul terang. Hex saja. |
+
+`toBlob()` membungkus salah satu format untuk upload dan object URL:
+
+```js
+const blob = await qr.toBlob();                        // image/svg+xml
+const png = await qr.toBlob({ type: 'image/png' });    // image/png
+await fetch('/upload', { method: 'POST', body: png });
 ```
 
 ### Matriks mentah

@@ -29,7 +29,7 @@ USAGE
 
 OPTIONS
   -o, --out <file>        Write to a file instead of stdout
-  -f, --format <format>   svg | terminal | data-url | json | matrix  (default: svg)
+  -f, --format <format>   svg | png | terminal | data-url | json | matrix  (default: svg)
   -e, --ecc <level>       low | medium | quartile | high  (or L, M, Q, H)
   -m, --margin <modules>  Quiet zone width in modules  (default: 4)
   -s, --scale <px>        Pixels per module for SVG output
@@ -244,7 +244,10 @@ async function main() {
   };
 
   const qr = QrCode.encodeText(payload, encodeOptions);
-  const format = options.format;
+
+  // `-o qr.png` is enough; the format is inferred from the extension.
+  const format =
+    options.format === 'svg' && options.out && /\.png$/i.test(options.out) ? 'png' : options.format;
 
   let output;
   switch (format) {
@@ -257,6 +260,17 @@ async function main() {
         title: options.title,
         includeXmlDeclaration: options.includeXmlDeclaration,
       });
+      break;
+    case 'png':
+      // Binary output, so the payload is a Buffer rather than a string.
+      output = Buffer.from(
+        await qr.toPngBuffer({
+          margin: options.margin,
+          scale: options.scale,
+          dark: options.dark,
+          light: options.light,
+        }),
+      );
       break;
     case 'terminal':
       output = qr.toTerminalString({
@@ -276,7 +290,7 @@ async function main() {
       output = `${qr.toBinaryStrings().join('\n')}\n`;
       break;
     default:
-      fail(`unknown format "${format}" (use svg, terminal, data-url, json or matrix)`);
+      fail(`unknown format "${format}" (use svg, png, terminal, data-url, json or matrix)`);
   }
 
   if (options.out) {

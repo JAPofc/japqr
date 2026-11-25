@@ -65,6 +65,31 @@ jobs:
       - name: Enforce coverage thresholds
         run: npm run coverage
 
+  metadata:
+    name: Package metadata
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Lint package.json and exports
+        run: npx publint --strict
+
+      - name: Check type resolution for ESM and CJS
+        run: npx attw --pack .
+
   package:
     name: Package contents
     runs-on: ubuntu-latest

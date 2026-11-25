@@ -44,9 +44,10 @@ export { rsComputeDivisor, rsComputeRemainder, rsEncode } from './core/reed-solo
 export { gfMultiply, gfPow } from './core/galois-field.js';
 export * from './core/errors.js';
 export { renderSvg, type SvgOptions, type SvgGradient, type SvgLogo } from './render/svg.js';
+export { renderPng, type PngOptions, type BlobOptions } from './render/png.js';
 export { renderTerminal, type TerminalOptions } from './render/terminal.js';
 export { drawToCanvas, type CanvasOptions } from './render/canvas.js';
-export { toBase64 } from './render/base64.js';
+export { toBase64, bytesToBase64 } from './render/base64.js';
 export {
   assertMask,
   ECC_CODEWORDS_PER_BLOCK,

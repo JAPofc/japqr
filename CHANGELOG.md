@@ -11,16 +11,37 @@ Feature release. No breaking changes.
 
 ### Added
 
+- **PNG output with no dependency.** `toPngBuffer()` and `toPngDataUrl()` encode
+  the matrix as a truecolour PNG: DEFLATE comes from the platform's
+  `CompressionStream` and the container is written by hand, so the same code
+  runs in Node, Bun, Deno and the browser. This is what lets a QR code be sent
+  as an image message instead of an SVG string.
+- `toBlob()`, returning an `image/svg+xml` blob by default or an `image/png`
+  blob when asked — ready for `FormData`, object URLs and `fetch` bodies.
 - Terminal `compact` option: packs two modules into one character cell with the
   half-block glyphs `▀`, `▄` and `█`, halving both dimensions. A version 17
-  symbol drops from 89 rows × 178 columns to 45 rows × 89 columns, which is the
-  only way a dense code fits a normal terminal.
-- CLI flag `--compact`, for tools that print a pairing code in the terminal.
+  symbol drops from 89 rows × 178 columns to 45 rows × 89 columns.
+- CLI `--format png`, plus `-o qr.png` which infers the format from the
+  extension, and `--compact`.
+
+### Fixed
+
+- **CommonJS consumers were getting ESM types.** The `require` condition now
+  points at a declaration tree that sits next to `"type": "commonjs"`, so
+  TypeScript resolves it as CJS instead of reporting the module as ESM.
+  Caught by `attw`, which is now part of CI.
+
+### Changed
+
+- `publint --strict` and `attw --pack .` run in CI, so a malformed `exports`
+  map cannot ship again.
 
 ### Tests
 
-- 7 new tests decode every compact cell back into its module rows and compare
-  the result with the original matrix, so the renderer is proven lossless.
+- 19 new tests: the PNG container is parsed back apart, IDAT is inflated with
+  `node:zlib` and every pixel is compared with the module it came from; the
+  compact renderer is decoded back into module rows and compared with the
+  original matrix.
 
 ## [1.1.0] - 2026-11-25
 
