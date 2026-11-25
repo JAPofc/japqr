@@ -5,6 +5,19 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-11-25
+
+Maintenance release.
+
+### Changed
+
+- **Node.js 22 is now the minimum supported version.** Node 20 reached end of
+  life in April 2026, so the previous floor of 20 no longer pointed at a
+  supported runtime. The CI matrix now covers 22 and 24.
+- CI enforces a size budget on the browser bundle: 12 kB gzipped, so the PNG
+  encoder cannot silently push the `<script>` build past what a page should
+  carry. The bundle is currently 9.8 kB gzipped.
+
 ## [1.2.0] - 2026-11-25
 
 Feature release. No breaking changes.
@@ -128,6 +141,7 @@ Initial public release.
 - All 8 mask patterns round-trip.
 - Numeric, alphanumeric, byte, UTF-8 and emoji payloads round-trip.
 
+[1.3.0]: https://github.com/JAPofc/japqr/releases/tag/v1.3.0
 [1.2.0]: https://github.com/JAPofc/japqr/releases/tag/v1.2.0
 [1.1.0]: https://github.com/JAPofc/japqr/releases/tag/v1.1.0
 [1.0.1]: https://github.com/JAPofc/japqr/releases/tag/v1.0.1

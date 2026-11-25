@@ -61,7 +61,7 @@ yarn add japofc-qr
 bun add japofc-qr
 ```
 
-Node.js 20+ or any modern browser. No dependencies, no native modules.
+Node.js 22+ or any modern browser. No dependencies, no native modules.
 
 <details>
 <summary><strong>Use it from a CDN</strong></summary>

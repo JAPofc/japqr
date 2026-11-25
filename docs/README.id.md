@@ -60,7 +60,7 @@ yarn add japofc-qr
 bun add japofc-qr
 ```
 
-Node.js 20+ atau browser modern. Tanpa dependensi, tanpa modul native.
+Node.js 22+ atau browser modern. Tanpa dependensi, tanpa modul native.
 
 ---
 

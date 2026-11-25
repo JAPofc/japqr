@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20, 22, 24]
+        node-version: [22, 24]
 
     steps:
       - name: Checkout
@@ -111,6 +111,16 @@ jobs:
 
       - name: Verify published files
         run: npm pack --dry-run
+
+      - name: Enforce the browser bundle size budget
+        run: |
+          SIZE=$(gzip -c dist/browser/japofc-qr.min.js | wc -c)
+          LIMIT=12000
+          echo "browser bundle: ${SIZE} bytes gzipped (budget ${LIMIT})"
+          if [ "$SIZE" -gt "$LIMIT" ]; then
+            echo "::error::browser bundle is ${SIZE} bytes gzipped, over the ${LIMIT} byte budget"
+            exit 1
+          fi
 
       - name: Verify the browser bundle ships
         run: npm pack --json | node -e "const files=JSON.parse(require('fs').readFileSync(0,'utf8'))[0].files.map(f=>f.path);const need=files.filter(f=>f.startsWith('dist/browser/'));if(need.length!==2){console.error('browser bundle missing from the tarball');process.exit(1)}console.log('browser bundle:',need.join(', '))"
