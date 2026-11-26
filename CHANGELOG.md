@@ -5,6 +5,43 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-11-25
+
+Completes the data-mode coverage and makes every renderer honest about what it
+can draw. No breaking changes to the library API.
+
+### Added
+
+- **Kanji mode.** `QrSegment.kanji(sjisBytes)` packs Shift-JIS characters into
+  13 bits each, exactly as ISO/IEC 18004 defines it, for payloads in the
+  `0x8140-0x9FFC` and `0xE040-0xEBBF` ranges. Japanese text stores about 20%
+  denser than byte mode. Converting Unicode to Shift-JIS stays the caller's job
+  (`iconv-lite` and friends), which keeps this package dependency-free and out
+  of the encoding-table business. All four data modes are now implemented.
+- **PNG and canvas module shapes.** `shape: 'dot' | 'rounded' | 'diamond'` is
+  now honoured by `toPngBuffer()`, `toPngDataUrl()`, `toBlob({ type: 'image/png' })`
+  and `drawToCanvas()`, using the same geometry as the SVG renderer. Finder
+  patterns stay square in every renderer.
+- **CLI styling flags.** `--theme`, `--shape`, `--frame`, `--frame-label` and
+  `--animate` mirror the SVG options; `--shape` also works for `-f png`.
+- **CLI batch mode.** `--zip <file>` reads a JSON array of `{name, text}`
+  entries and writes a ZIP of PNGs through `encodeBatch()`.
+
+### Fixed
+
+- **`toPngBuffer()` and `drawToCanvas()` no longer silently ignore SVG-only
+  options.** Passing `logo`, `frame`, `theme`, `gradient` or `animate` used to
+  produce plain output with no warning; the caller believed the logo was in the
+  file. Both renderers now throw `InvalidArgumentError` pointing at
+  `toSvgString()`. Unknown `shape` and `theme` values throw too.
+- **The release workflow built the package on Node 20**, which reached end of
+  life in April 2026, while `engines` demands 22. Releases now build on Node 22.
+
+### Added (tooling)
+
+- CLI tests run the entry point as a real child process, so a flag cannot stop
+  applying without a red CI.
+
 ## [1.4.0] - 2026-11-25
 
 Feature release. No breaking changes to the library API, but the supported

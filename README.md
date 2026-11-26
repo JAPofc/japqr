@@ -35,11 +35,11 @@
 | | |
 | --- | --- |
 | ⚡ **Zero dependencies** | Nothing to install, audit or bundle but the library itself. |
-| 🎯 **All 40 versions** | Every version, every error-correction level, all 8 mask patterns. |
+| 🎯 **All 40 versions** | Every version, every error-correction level, all 8 mask patterns, all 4 data modes. |
 | 🔀 **Smart segmentation** | Text is split into numeric / alphanumeric / byte runs and merged only when it saves bits. |
 | 🛡️ **Automatic ECC boosting** | Uses the highest error-correction level the payload still fits into. |
 | 📇 **Payload builders** | Wi-Fi, vCard, calendar, geo and WhatsApp payloads, escaped correctly for each format. |
-| 🖼️ **Four output formats** | SVG, terminal, `<canvas>` and data URL, plus the raw boolean matrix. |
+| 🖼️ **Every output format** | SVG, PNG, terminal, `<canvas>`, data URL and the raw boolean matrix. |
 | 📦 **Dual builds** | ESM and CommonJS behind a standard `exports` map, with TypeScript declarations. |
 
 <p align="center">
@@ -186,6 +186,17 @@ cat payload.txt | japofc-qr [options]
       --title <text>      Accessible title for the SVG
       --compact           Half-block terminal output (1 column per module)
       --no-xml            Omit the XML declaration
+
+STYLING (SVG output, including data-url)
+      --theme <name>      minimal | neon | glass | ink
+      --shape <shape>     square | dot | rounded | diamond  (also for png)
+      --frame             Draw a card around the symbol
+      --frame-label <t>   Text printed under the code  (implies --frame)
+      --animate           Sweep a highlight down the symbol
+
+BATCH
+      --zip <file>        JSON array of {name, text} entries -> ZIP of PNGs
+
   -q, --quiet             Suppress the summary printed to stderr
   -h, --help              Show help
   -v, --version           Print the package version
@@ -275,6 +286,7 @@ All options are optional and validated; invalid values throw an [`InvalidArgumen
 | `QrSegment.numeric(text)` | Decimal digits, packed 3 digits per 10 bits. |
 | `QrSegment.alphanumeric(text)` | The 45-character QR alphabet (`0-9 A-Z space $%*+-./:`). |
 | `QrSegment.bytes(bytes)` | Raw bytes, 8 bits each. |
+| `QrSegment.kanji(bytes)` | Shift-JIS pairs packed 13 bits per character (`0x8140-0x9FFC`, `0xE040-0xEBBF`). |
 | `QrSegment.utf8(text)` | A single byte segment from UTF-8 text. |
 | `QrSegment.eci(value)` | Extended Channel Interpretation designator. |
 | `QrSegment.fromText(text, options?)` | Automatic cost-optimal segmentation. |
@@ -460,6 +472,9 @@ qr.toSvgString({ theme: 'neon', frame: { label: 'Scan to connect' } });
 qr.draw(document.querySelector('#qr'), { margin: 4, scale: 8, dark: '#111', light: '#fff' });
 ```
 
+Accepts the same options as the PNG renderer, including `shape`. Asking for an
+SVG-only feature such as `logo` or `frame` throws instead of silently ignoring it.
+
 ### Data URL
 
 ```js
@@ -488,6 +503,11 @@ const url = await qr.toPngDataUrl();
 | `margin` | `4` | Quiet zone, in modules. |
 | `dark` | `#000000` | Dark module colour. Hex only: `#rgb` or `#rrggbb`. |
 | `light` | `#ffffff` | Light module colour. Hex only. |
+| `shape` | `square` | Data module shape: `square`, `dot`, `rounded` or `diamond`. Finder patterns stay square. |
+
+SVG-only features (`theme`, `gradient`, `logo`, `frame`, `animate`) are rejected
+with a clear error instead of being dropped silently — a PNG with a missing logo
+should never look like a PNG that has one.
 
 `toBlob()` wraps either format for uploads and object URLs:
 

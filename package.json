@@ -1,6 +1,6 @@
 {
   "name": "japofc-qr",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Zero-dependency QR Code generator for Node.js, Bun, Deno and browsers - numeric, alphanumeric, byte and ECI segments, with SVG, terminal and canvas output.",
   "keywords": [
     "japofc-qr",

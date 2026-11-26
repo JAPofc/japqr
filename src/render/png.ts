@@ -19,6 +19,7 @@
 
 import { EncodingError, InvalidArgumentError } from '../core/errors.js';
 import { crc32 } from './crc32.js';
+import { inFinder, normalizeShape, type ModuleShape } from './shapes.js';
 import type { QrLike } from '../core/qr-code.js';
 
 /** Options for the PNG renderer. */
@@ -31,6 +32,8 @@ export interface PngOptions {
   readonly light?: string;
   /** Pixels per module. Defaults to `8`. Must be at least `1`. */
   readonly scale?: number;
+  /** Shape of the data modules. Defaults to `square`. Finder patterns stay square. */
+  readonly shape?: ModuleShape;
 }
 
 /** Options for `QrCode.toBlob()`. */
@@ -51,12 +54,32 @@ const DEFAULT_SCALE = 8;
 /** PNG file signature. */
 const SIGNATURE = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
 
+/**
+ * Options that only the SVG renderer can honour. Raster output rejects them
+ * loudly instead of silently dropping them: a caller who passes `logo` to
+ * `toPngBuffer()` should never walk away thinking the logo is in the file.
+ */
+const SVG_ONLY_OPTIONS = ['gradient', 'logo', 'frame', 'theme', 'animate'] as const;
+
+/** Throws when raster output is asked for an SVG-only feature. */
+export function assertRasterOptions(options: object, renderer: string): void {
+  for (const key of SVG_ONLY_OPTIONS) {
+    if ((options as Record<string, unknown>)[key] !== undefined) {
+      throw new InvalidArgumentError(
+        `${renderer} output cannot render "${key}"; render an SVG with toSvgString() instead.`,
+      );
+    }
+  }
+}
+
 /** Renders the QR Code as an encoded PNG. */
 export async function renderPng(qr: QrLike, options: PngOptions = {}): Promise<Uint8Array> {
+  assertRasterOptions(options, 'PNG');
   const margin = Math.max(0, Math.floor(options.margin ?? DEFAULT_MARGIN));
   const scale = Math.max(1, Math.floor(options.scale ?? DEFAULT_SCALE));
   const dark = parseColor(options.dark ?? '#000000');
   const light = parseColor(options.light ?? '#ffffff');
+  const shape = normalizeShape(options.shape);
 
   const size = (qr.size + margin * 2) * scale;
   const stride = size * 3 + 1;
@@ -75,7 +98,14 @@ export async function renderPng(qr: QrLike, options: PngOptions = {}): Promise<U
         moduleX < qr.size &&
         moduleY < qr.size &&
         qr.modules[moduleY][moduleX];
-      const [red, green, blue] = isDark ? dark : light;
+      // Shapes only touch data modules; the finder patterns stay solid blocks
+      // so cameras still have something to lock onto.
+      const paint =
+        isDark &&
+        (shape === 'square' || inFinder(moduleX, moduleY, qr.size)
+          ? true
+          : pixelInShape(shape, x % scale, y % scale, scale));
+      const [red, green, blue] = paint ? dark : light;
       const offset = rowStart + 1 + x * 3;
       raw[offset] = red;
       raw[offset + 1] = green;
@@ -139,6 +169,31 @@ function concat(parts: readonly Uint8Array[]): Uint8Array {
     offset += part.length;
   }
   return out;
+}
+
+/**
+ * Tests whether a pixel inside one module belongs to the module's shape.
+ * The geometry mirrors the SVG primitives: a circle of radius `0.42` for
+ * `dot`, corner radius `0.3` for `rounded`, and a diamond whose vertices touch
+ * the edge midpoints.
+ */
+function pixelInShape(shape: ModuleShape, px: number, py: number, scale: number): boolean {
+  // Pixel centre in module units, so (-0.5, -0.5) .. (0.5, 0.5).
+  const u = (px + 0.5) / scale - 0.5;
+  const v = (py + 0.5) / scale - 0.5;
+  switch (shape) {
+    case 'dot':
+      return u * u + v * v <= 0.42 * 0.42;
+    case 'diamond':
+      return Math.abs(u) + Math.abs(v) <= 0.5;
+    default: {
+      const radius = 0.3;
+      const qx = Math.abs(u) - (0.5 - radius);
+      const qy = Math.abs(v) - (0.5 - radius);
+      const outside = Math.sqrt(Math.max(qx, 0) ** 2 + Math.max(qy, 0) ** 2);
+      return outside + Math.min(Math.max(qx, qy), 0) <= radius;
+    }
+  }
 }
 
 /** Parses `#rgb` or `#rrggbb` into an RGB triple. */

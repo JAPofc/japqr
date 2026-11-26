@@ -19,9 +19,11 @@
 
 import { attributionComment, attributionMetadata } from '../brand.js';
 import type { QrLike } from '../core/qr-code.js';
+import { InvalidArgumentError } from '../core/errors.js';
+import { inFinder, normalizeShape, type ModuleShape } from './shapes.js';
 
 /** Shape used for the data modules. Finder patterns always stay square. */
-export type SvgShape = 'square' | 'dot' | 'rounded' | 'diamond';
+export type SvgShape = ModuleShape;
 
 /** Built-in looks. Explicit options override every field of a theme. */
 export type SvgTheme = 'minimal' | 'neon' | 'glass' | 'ink';
@@ -125,9 +127,6 @@ const DEFAULT_BRAND = '@japofc';
 /** Font stack used inside frames, safe across platforms. */
 const FONT_STACK = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
 
-/** Finder patterns occupy a 7x7 block in three corners. */
-const FINDER_SIZE = 7;
-
 interface ThemeValues {
   readonly dark: string;
   readonly light: string;
@@ -151,13 +150,18 @@ const THEMES: Record<SvgTheme, ThemeValues> = {
 
 /** Renders the QR Code as an SVG string. */
 export function renderSvg(qr: QrLike, options: SvgOptions = {}): string {
+  if (options.theme !== undefined && !(options.theme in THEMES)) {
+    throw new InvalidArgumentError(
+      `Unknown theme ${JSON.stringify(options.theme)}; use minimal, neon, glass or ink.`,
+    );
+  }
   const theme = options.theme ? THEMES[options.theme] : undefined;
 
   const margin = Math.max(0, Math.floor(options.margin ?? theme?.margin ?? DEFAULT_MARGIN));
   const dark = options.dark ?? theme?.dark ?? '#000000';
   const light = options.light ?? theme?.light ?? '#ffffff';
   const scale = options.scale;
-  const shape = options.shape ?? theme?.shape ?? 'square';
+  const shape = normalizeShape(options.shape ?? theme?.shape);
   // An explicit `dark` colour wins over the theme's gradient: the gradient
   // would otherwise silently override the colour the caller asked for.
   const gradient = buildGradient(
@@ -314,14 +318,6 @@ function buildModules(qr: QrLike, shape: SvgShape, fill: string, prefix: string)
       `<path fill="${fill}" d="${buildPathData(qr, (x, y) => inFinder(x, y, qr.size))}"/>` +
       `<g fill="${fill}">${uses.join('')}</g>`,
   };
-}
-
-function inFinder(x: number, y: number, size: number): boolean {
-  return (
-    (x < FINDER_SIZE && y < FINDER_SIZE) ||
-    (x >= size - FINDER_SIZE && y < FINDER_SIZE) ||
-    (x < FINDER_SIZE && y >= size - FINDER_SIZE)
-  );
 }
 
 interface GradientResult {

@@ -3,7 +3,7 @@
  *
  * A segment is one mode switch inside the codeword stream. This module knows
  * how to turn text into the most compact sequence of numeric, alphanumeric and
- * byte segments, and how to build raw byte / ECI segments by hand.
+ * byte segments, and how to build raw byte, kanji and ECI segments by hand.
  *
  * Copyright (c) 2026 @japofc
  * Released under the MIT License.
@@ -157,6 +157,57 @@ export class QrSegment {
       push(assignmentValue, 21);
     }
     return new QrSegment(SegmentMode.Eci, 0, bits);
+  }
+
+  /**
+   * Builds a kanji segment from Shift-JIS encoded characters.
+   *
+   * Each character is one two-byte Shift-JIS value inside the ranges defined
+   * by ISO/IEC 18004: `0x8140-0x9FFC` or `0xE040-0xEBBF`. The encoder packs
+   * every character into 13 bits using the standard's subtraction step, so
+   * kanji mode stores Japanese text about 20 percent denser than byte mode.
+   *
+   * Converting Unicode text to Shift-JIS is deliberately left to the caller
+   * (for example with `iconv-lite`), which keeps this package free of encoding
+   * tables and runtime dependencies.
+   *
+   * @param bytes Shift-JIS byte pairs; the length must be even.
+   */
+  public static kanji(bytes: ArrayLike<number>): QrSegment {
+    if (bytes.length % 2 !== 0) {
+      throw new InvalidArgumentError(
+        `Kanji segments take one two-byte Shift-JIS pair per character; received ${bytes.length} bytes.`,
+      );
+    }
+    const bits: number[] = [];
+    for (let i = 0; i < bytes.length; i += 2) {
+      const lead = bytes[i];
+      const trail = bytes[i + 1];
+      if (!Number.isInteger(lead) || lead < 0 || lead > 0xff) {
+        throw new InvalidArgumentError(`Byte at index ${i} is out of range [0, 255]: ${lead}.`);
+      }
+      if (!Number.isInteger(trail) || trail < 0 || trail > 0xff) {
+        throw new InvalidArgumentError(`Byte at index ${i + 1} is out of range [0, 255]: ${trail}.`);
+      }
+      const code = (lead << 8) | trail;
+      let subtracted: number;
+      if (code >= 0x8140 && code <= 0x9ffc) {
+        subtracted = code - 0x8140;
+      } else if (code >= 0xe040 && code <= 0xebbf) {
+        subtracted = code - 0xc140;
+      } else {
+        throw new UnsupportedCharacterError(
+          `Shift-JIS value 0x${code.toString(16).padStart(4, '0').toUpperCase()} at index ${i} is ` +
+            'outside the kanji ranges 0x8140-0x9FFC and 0xE040-0xEBBF.',
+        );
+      }
+      // 13-bit value defined by the standard: high byte * 0xC0 + low byte.
+      const value = (subtracted >> 8) * 0xc0 + (subtracted & 0xff);
+      for (let b = 12; b >= 0; b -= 1) {
+        bits.push((value >>> b) & 1);
+      }
+    }
+    return new QrSegment(SegmentMode.Kanji, bytes.length / 2, bits);
   }
 
   /** Builds a single byte segment from a UTF-8 encoded string. */

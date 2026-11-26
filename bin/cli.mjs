@@ -18,7 +18,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { QrCode } from '../dist/esm/index.js';
+import { QrCode, encodeBatch } from '../dist/esm/index.js';
 
 const HELP = `
 japofc-qr - generate QR codes from the command line
@@ -42,6 +42,17 @@ OPTIONS
       --title <text>      Accessible title for the SVG
       --compact           Half-block terminal output (1 column per module)
       --no-xml            Omit the XML declaration
+
+STYLING (SVG output, including data-url)
+      --theme <name>      minimal | neon | glass | ink
+      --shape <shape>     square | dot | rounded | diamond  (also for png)
+      --frame             Draw a card around the symbol
+      --frame-label <t>   Text printed under the code  (implies --frame)
+      --animate           Sweep a highlight down the symbol
+
+BATCH
+      --zip <file>        JSON array of {name, text} entries -> ZIP of PNGs
+
   -q, --quiet             Suppress the summary printed to stderr
   -h, --help              Show this help
   -v, --version           Print the package version
@@ -49,7 +60,9 @@ OPTIONS
 EXAMPLES
   japofc-qr "https://github.com/JAPofc/japqr"
   japofc-qr "Hello, world!" -f terminal
-  japofc-qr "Top secret" -e H -m 2 -s 12 -o qr.svg
+  japofc-qr "https://example.com" --theme neon --frame -o card.svg
+  japofc-qr "https://example.com" -f png --shape dot -o qr.png
+  japofc-qr --zip batch.json -o batch.zip
   printf 'payload' | japofc-qr --format data-url
 `;
 
@@ -87,6 +100,7 @@ const ECC_ALIASES = {
 function parseArguments(argv) {
   const options = {
     format: 'svg',
+    formatGiven: false,
     margin: undefined,
     scale: undefined,
     ecc: undefined,
@@ -103,6 +117,12 @@ function parseArguments(argv) {
     compact: false,
     help: false,
     version: false,
+    theme: undefined,
+    shape: undefined,
+    frame: false,
+    frameLabel: undefined,
+    animate: false,
+    zip: undefined,
   };
   const positional = [];
 
@@ -152,6 +172,7 @@ function parseArguments(argv) {
       case '-f':
       case '--format':
         options.format = takesValue(flag).toLowerCase();
+        options.formatGiven = true;
         if (!isLast) i += 1;
         break;
       case '-e':
@@ -196,6 +217,28 @@ function parseArguments(argv) {
         options.title = takesValue(flag);
         if (!isLast) i += 1;
         break;
+      case '--theme':
+        options.theme = takesValue(flag).toLowerCase();
+        if (!isLast) i += 1;
+        break;
+      case '--shape':
+        options.shape = takesValue(flag).toLowerCase();
+        if (!isLast) i += 1;
+        break;
+      case '--frame':
+        options.frame = true;
+        break;
+      case '--frame-label':
+        options.frameLabel = takesValue(flag);
+        if (!isLast) i += 1;
+        break;
+      case '--animate':
+        options.animate = true;
+        break;
+      case '--zip':
+        options.zip = takesValue(flag);
+        if (!isLast) i += 1;
+        break;
       default:
         if (arg.startsWith('-') && arg !== '-') {
           fail(`unknown option "${arg}"`);
@@ -227,14 +270,6 @@ async function main() {
     return;
   }
 
-  let payload = positional.join(' ');
-  if (payload.length === 0 && !process.stdin.isTTY) {
-    payload = await readStdin();
-  }
-  if (payload.length === 0) {
-    fail('no payload given. Pass the text as an argument or pipe it on stdin.');
-  }
-
   const encodeOptions = {
     ecc: options.ecc,
     mask: options.mask,
@@ -243,54 +278,135 @@ async function main() {
     boostEcc: options.boostEcc,
   };
 
-  const qr = QrCode.encodeText(payload, encodeOptions);
-
   // `-o qr.png` is enough; the format is inferred from the extension.
   const format =
     options.format === 'svg' && options.out && /\.png$/i.test(options.out) ? 'png' : options.format;
 
   let output;
-  switch (format) {
-    case 'svg':
-      output = qr.toSvgString({
-        margin: options.margin,
-        scale: options.scale,
-        dark: options.dark,
-        light: options.light,
-        title: options.title,
-        includeXmlDeclaration: options.includeXmlDeclaration,
-      });
-      break;
-    case 'png':
-      // Binary output, so the payload is a Buffer rather than a string.
-      output = Buffer.from(
-        await qr.toPngBuffer({
+  if (options.zip) {
+    if (options.formatGiven) {
+      fail('--zip cannot be combined with --format');
+    }
+    if (positional.length > 0) {
+      fail('use either <text> or --zip, not both');
+    }
+    if (options.theme !== undefined || options.frame || options.frameLabel !== undefined || options.animate) {
+      fail('--theme, --frame and --animate are SVG-only and cannot be used with --zip (the archive holds PNGs)');
+    }
+    let items;
+    try {
+      items = JSON.parse(readFileSync(resolve(options.zip), 'utf8'));
+    } catch (error) {
+      fail(`cannot read ${options.zip}: ${error instanceof Error ? error.message : error}`);
+    }
+    if (
+      !Array.isArray(items) ||
+      items.length === 0 ||
+      items.some(
+        (item) =>
+          !item ||
+          typeof item !== 'object' ||
+          typeof item.name !== 'string' ||
+          typeof item.text !== 'string',
+      )
+    ) {
+      fail('--zip expects a non-empty JSON array of {"name": "...", "text": "..."} entries');
+    }
+    output = Buffer.from(
+      await encodeBatch(items, {
+        encode: encodeOptions,
+        png: {
           margin: options.margin,
           scale: options.scale,
           dark: options.dark,
           light: options.light,
-        }),
-      );
-      break;
-    case 'terminal':
-      output = qr.toTerminalString({
-        margin: options.margin ?? 2,
-        dark: options.dark,
-        light: options.light,
-        compact: options.compact,
-      });
-      break;
-    case 'data-url':
-      output = `${qr.toDataUrl({ margin: options.margin, scale: options.scale, dark: options.dark, light: options.light })}\n`;
-      break;
-    case 'json':
-      output = `${JSON.stringify(qr.toJSON(), null, 2)}\n`;
-      break;
-    case 'matrix':
-      output = `${qr.toBinaryStrings().join('\n')}\n`;
-      break;
-    default:
-      fail(`unknown format "${format}" (use svg, png, terminal, data-url, json or matrix)`);
+          shape: options.shape,
+        },
+      }),
+    );
+    if (!options.out) {
+      options.out = 'batch.zip';
+    }
+  } else {
+    let payload = positional.join(' ');
+    if (payload.length === 0 && !process.stdin.isTTY) {
+      payload = await readStdin();
+    }
+    if (payload.length === 0) {
+      fail('no payload given. Pass the text as an argument or pipe it on stdin.');
+    }
+
+    const shaped = options.shape !== undefined;
+    const decorated = options.theme !== undefined || options.frame || options.frameLabel !== undefined || options.animate;
+    if ((shaped || decorated) && !['svg', 'data-url', 'png'].includes(format)) {
+      fail(`--theme/--shape/--frame/--animate are not available for ${format} output`);
+    }
+    if (decorated && format === 'png') {
+      fail('--theme, --frame and --animate are SVG-only; use -f svg (or --format data-url)');
+    }
+
+    const style = {
+      theme: options.theme,
+      shape: options.shape,
+      frame:
+        options.frame || options.frameLabel !== undefined
+          ? (options.frameLabel !== undefined ? { label: options.frameLabel } : true)
+          : undefined,
+      animate: options.animate ? true : undefined,
+    };
+
+    const qr = QrCode.encodeText(payload, encodeOptions);
+
+    switch (format) {
+      case 'svg':
+        output = qr.toSvgString({
+          margin: options.margin,
+          scale: options.scale,
+          dark: options.dark,
+          light: options.light,
+          title: options.title,
+          includeXmlDeclaration: options.includeXmlDeclaration,
+          ...style,
+        });
+        break;
+      case 'png':
+        // Binary output, so the payload is a Buffer rather than a string.
+        output = Buffer.from(
+          await qr.toPngBuffer({
+            margin: options.margin,
+            scale: options.scale,
+            dark: options.dark,
+            light: options.light,
+            shape: options.shape,
+          }),
+        );
+        break;
+      case 'terminal':
+        output = qr.toTerminalString({
+          margin: options.margin ?? 2,
+          dark: options.dark,
+          light: options.light,
+          compact: options.compact,
+        });
+        break;
+      case 'data-url':
+        output = `${qr.toDataUrl({
+          margin: options.margin,
+          scale: options.scale,
+          dark: options.dark,
+          light: options.light,
+          ...style,
+        })}\n`;
+        break;
+      case 'json':
+        output = `${JSON.stringify(qr.toJSON(), null, 2)}\n`;
+        break;
+      case 'matrix':
+        output = `${qr.toBinaryStrings().join('\n')}\n`;
+        break;
+      default:
+        fail(`unknown format "${format}" (use svg, png, terminal, data-url, json or matrix)`);
+    }
   }
 
   if (options.out) {

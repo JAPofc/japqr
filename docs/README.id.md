@@ -34,10 +34,10 @@
 | | |
 | --- | --- |
 | ⚡ **Tanpa dependensi** | Tidak ada yang perlu diinstall, diaudit, atau dibundle selain library-nya. |
-| 🎯 **Seluruh 40 versi** | Semua versi, semua level error correction, semua 8 pola mask. |
+| 🎯 **Seluruh 40 versi** | Semua versi, semua level error correction, semua 8 pola mask, semua 4 mode data. |
 | 🔀 **Segmentasi cerdas** | Teks dipecah per run numeric / alphanumeric / byte, digabung hanya kalau hemat bit. |
 | 🛡️ **ECC boosting otomatis** | Pakai level koreksi tertinggi yang masih muat. |
-| 🖼️ **Empat format output** | SVG, terminal, `<canvas>`, dan data URL, plus matriks boolean mentah. |
+| 🖼️ **Semua format output** | SVG, PNG, terminal, `<canvas>`, data URL, plus matriks boolean mentah. |
 | 📦 **Dual build** | ESM dan CommonJS lewat `exports` map standar, lengkap dengan deklarasi TypeScript. |
 
 <p align="center">
@@ -150,6 +150,12 @@ npx japofc-qr "Halo, dunia!" --format terminal
 
 # error correction tertinggi, quiet zone lebih lebar, skala lebih besar
 npx japofc-qr "Rahasia" --ecc high --margin 3 --scale 12
+
+# styling: tema, frame, animasi
+npx japofc-qr "https://example.com" --theme neon --frame-label "Scan untuk terhubung" -o kartu.svg
+
+# batch: satu ZIP berisi satu PNG per entri
+npx japofc-qr --zip batch.json -o batch.zip
 ```
 
 ---
@@ -236,6 +242,7 @@ Semua opsi bersifat opsional dan tervalidasi; nilai tidak valid melempar [`Inval
 | `QrSegment.numeric(text)` | Digit desimal, 3 digit per 10 bit. |
 | `QrSegment.alphanumeric(text)` | Alfabet QR 45 karakter (`0-9 A-Z spasi $%*+-./:`). |
 | `QrSegment.bytes(bytes)` | Byte mentah, 8 bit tiap byte. |
+| `QrSegment.kanji(bytes)` | Pasangan Shift-JIS dikemas 13 bit per karakter (`0x8140-0x9FFC`, `0xE040-0xEBBF`). |
 | `QrSegment.utf8(text)` | Satu segmen byte dari teks UTF-8. |
 | `QrSegment.eci(value)` | Designator Extended Channel Interpretation. |
 | `QrSegment.fromText(text, options?)` | Segmentasi otomatis yang paling hemat bit. |
@@ -412,6 +419,10 @@ qr.toSvgString({ theme: 'neon', frame: { label: 'Scan untuk terhubung' } });
 qr.draw(document.querySelector('#qr'), { margin: 4, scale: 8, dark: '#111', light: '#fff' });
 ```
 
+Menerima opsi yang sama dengan renderer PNG, termasuk `shape`. Meminta fitur
+khusus SVG seperti `logo` atau `frame` akan melempar error, bukan diam-diam
+diabaikan.
+
 ### Data URL
 
 ```js
@@ -439,6 +450,11 @@ const url = await qr.toPngDataUrl();
 | `margin` | `4` | Quiet zone, dalam modul. |
 | `dark` | `#000000` | Warna modul gelap. Hex saja: `#rgb` atau `#rrggbb`. |
 | `light` | `#ffffff` | Warna modul terang. Hex saja. |
+| `shape` | `square` | Bentuk modul data: `square`, `dot`, `rounded`, atau `diamond`. Finder pattern tetap kotak. |
+
+Fitur khusus SVG (`theme`, `gradient`, `logo`, `frame`, `animate`) ditolak
+dengan error yang jelas, bukan dibuang diam-diam — PNG yang logonya hilang
+tidak boleh terlihat seperti PNG yang bawa logo.
 
 `toBlob()` membungkus salah satu format untuk upload dan object URL:
 
